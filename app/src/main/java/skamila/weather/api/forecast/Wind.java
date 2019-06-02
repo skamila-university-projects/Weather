@@ -1,8 +1,15 @@
 package skamila.weather.api.forecast;
 
-class Wind {
+public class Wind {
 
-    double speed;
-    double deg;
+    private double speed;
+    private double deg;
 
+    public double getSpeed() {
+        return speed;
+    }
+
+    public double getDeg() {
+        return deg;
+    }
 }

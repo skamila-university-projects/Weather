@@ -23,11 +23,11 @@ public class MainActivity extends AppCompatActivity {
 
         ApiClient apiClient = new ApiClient();
         ApiController apiController = new ApiController(this, apiClient, fileManager);
-        String data = apiController.downloadForecast("Pozznan", "pl");
+        String data = apiController.downloadForecast("Poznan", "pl");
 
 
         textView.setText(fileManager.loadFromFile());
-        Forecast forecast = apiController.convertForecastToObject(fileManager.loadFromFile());
+        Forecast forecast = ApiController.convertForecastToObject(fileManager.loadFromFile());
 
     }
 

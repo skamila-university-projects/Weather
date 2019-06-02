@@ -1,17 +1,36 @@
 package skamila.weather.api.forecast;
 
-import java.util.List;
+public class City {
 
-class City {
+    private int id;
+    private String name;
+    private Coord coord;
+    private String country;
+    private int population;
+    private int timezone;
 
-    int id;
-    String name;
-    Coord coord;
-    String country;
-    String cod; //? int ?
-    String message; // ? double ?
-    String cnt; // ? int ?
-    List <Lalala> list;
+    public int getId() {
+        return id;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public Coord getCoord() {
+        return coord;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public int getTimezone() {
+        return timezone;
+    }
 
 }

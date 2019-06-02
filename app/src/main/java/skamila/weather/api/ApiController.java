@@ -36,7 +36,7 @@ public class ApiController {
 
     }
 
-    public CurrentWeather convertCurrentWeatherToObject(String data){
+    public static CurrentWeather convertCurrentWeatherToObject(String data){
 
         try {
             FileWriter fw=new FileWriter("");
@@ -53,17 +53,8 @@ public class ApiController {
     }
 
 
-    public Forecast convertForecastToObject(String data){
+    public static Forecast convertForecastToObject(String data){
 
-        try {
-            FileWriter fw=new FileWriter("");
-            fw.write(data);
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(data);
         Gson g = new Gson();
         return g.fromJson(data, Forecast.class);
 

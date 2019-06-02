@@ -1,7 +1,11 @@
 package skamila.weather.api.forecast;
 
-class Clouds {
+public class Clouds {
 
-    double all;
+    private double all;
+
+    public double getAll() {
+        return all;
+    }
 
 }

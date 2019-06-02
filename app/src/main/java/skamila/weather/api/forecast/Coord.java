@@ -1,8 +1,16 @@
 package skamila.weather.api.forecast;
 
-class Coord {
+public class Coord {
 
-    double lon;
-    double lat;
+    private double lon;
+    private double lat;
+
+    public double getLon() {
+        return lon;
+    }
+
+    public double getLat() {
+        return lat;
+    }
 
 }

@@ -1,12 +1,11 @@
 package skamila.weather.api.forecast;
 
-class Sys {
+public class Sys {
 
-    String type;
-    int id;
-    String message;
-    String country;
-    String sunrise;
-    String sunset;
+    private String pod;
+
+    public String getPod() {
+        return pod;
+    }
 
 }

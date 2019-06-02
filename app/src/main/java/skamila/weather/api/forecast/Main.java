@@ -1,14 +1,46 @@
 package skamila.weather.api.forecast;
 
-class Main {
+public class Main {
 
-    double temp;
-    double temp_min;
-    double temp_max;
-    double pressure;
-    double sea_level;
-    double grnd_level;
-    double humidity;
-    double temp_kf;
+    private double temp;
+    private double temp_min;
+    private double temp_max;
+    private double pressure;
+    private double sea_level;
+    private double grnd_level;
+    private double humidity;
+    private double temp_kf;
+
+    public double getTemp() {
+        return temp;
+    }
+
+    public double getTemp_min() {
+        return temp_min;
+    }
+
+    public double getTemp_max() {
+        return temp_max;
+    }
+
+    public double getPressure() {
+        return pressure;
+    }
+
+    public double getSea_level() {
+        return sea_level;
+    }
+
+    public double getGrnd_level() {
+        return grnd_level;
+    }
+
+    public double getHumidity() {
+        return humidity;
+    }
+
+    public double getTemp_kf() {
+        return temp_kf;
+    }
 
 }
