@@ -1,5 +1,6 @@
 package skamila.weather.api;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import skamila.weather.api.forecast.City;
@@ -9,15 +10,19 @@ public class FavoriteCitiesForecast {
 
     private Map<City, Forecast> forecast;
 
+    public FavoriteCitiesForecast(){
+        forecast = new HashMap<>();
+    }
+
     public Forecast getForecast(City city){
         return forecast.get(city);
     }
 
-    public void addCity(City city, Forecast forecast){
+    public void add(City city, Forecast forecast){
         this.forecast.put(city, forecast);
     }
 
-    public void deleteCity(City city){
+    public void delete(City city){
         forecast.remove(city);
     }
 

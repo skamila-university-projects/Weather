@@ -10,9 +10,13 @@ import android.widget.Toast;
 import skamila.weather.R;
 import skamila.weather.api.ApiClient;
 import skamila.weather.api.ApiController;
+import skamila.weather.api.FavoriteCitiesForecast;
 import skamila.weather.api.FileManager;
+import skamila.weather.api.forecast.Forecast;
 
 public class MainActivity extends AppCompatActivity {
+
+    FavoriteCitiesForecast forecastForCities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,17 +24,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        prepareForecast();
+
+    }
+
+    private void prepareForecast(){
+        final FileManager fileManager = new FileManager(this, "data.txt");
+        String data;
+        forecastForCities = new FavoriteCitiesForecast();
+
         if(!isInternetConnection()){
             Toast.makeText(this, "No connection to the Internet. \n" +
                     "Data may be out of date.", Toast.LENGTH_LONG).show();
+            data = fileManager.loadFromFile();
+        } else {
+            ApiClient apiClient = new ApiClient();
+            ApiController apiController = new ApiController(this, apiClient, fileManager);
+            data = apiController.downloadForecast("Poznan", "pl");
         }
 
-        final FileManager fileManager = new FileManager(this, "data.txt");
-
-        ApiClient apiClient = new ApiClient();
-        ApiController apiController = new ApiController(this, apiClient, fileManager);
-        String data = apiController.downloadForecast("Lodz", "pl");
-
+        Forecast forecast = ApiController.convertForecastToObject(data);
+        forecastForCities.add(forecast.getCity(), forecast);
     }
 
     private boolean isInternetConnection() {
@@ -38,5 +52,7 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
 
 }
