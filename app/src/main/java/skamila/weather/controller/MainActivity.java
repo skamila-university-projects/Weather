@@ -3,6 +3,9 @@ package skamila.weather.controller;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -20,11 +23,12 @@ import skamila.weather.api.ProgramData;
 import skamila.weather.api.forecast.Forecast;
 import skamila.weather.api.forecast.Weather;
 import skamila.weather.api.forecast.WeatherDescription;
+import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    FavoriteCitiesForecast forecastForCities;
-    ProgramData programData;
+    protected static FavoriteCitiesForecast forecastForCities;
+    private ProgramData programData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,22 @@ public class MainActivity extends AppCompatActivity {
 
         prepareForecast();
         fillBasicInformation();
+
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
+
+        FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int i) {
+                return nextDaysForecastFragment;
+            }
+
+            @Override
+            public int getCount() {
+                return 1;
+            }
+        };
+        viewPager.setAdapter(pagerAdapter);
 
     }
 
