@@ -23,6 +23,7 @@ import skamila.weather.api.ProgramData;
 import skamila.weather.api.forecast.Forecast;
 import skamila.weather.api.forecast.Weather;
 import skamila.weather.api.forecast.WeatherDescription;
+import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,16 +42,21 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager viewPager = findViewById(R.id.viewPager);
         final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
+        final Fragment moreInformationFragment = new MoreInformationFragment();
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int i) {
-                return nextDaysForecastFragment;
+                if(i == 0){
+                    return nextDaysForecastFragment;
+                } else {
+                    return moreInformationFragment;
+                }
             }
 
             @Override
             public int getCount() {
-                return 1;
+                return 2;
             }
         };
         viewPager.setAdapter(pagerAdapter);
