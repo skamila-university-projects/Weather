@@ -1,12 +1,14 @@
 package skamila.weather.api;
 
+import android.arch.lifecycle.ViewModel;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import skamila.weather.api.forecast.City;
 import skamila.weather.api.forecast.Forecast;
 
-public class FavoriteCitiesForecast {
+public class FavoriteCitiesForecast extends ViewModel {
 
     private Map<City, Forecast> forecast;
 
