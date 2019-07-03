@@ -19,40 +19,24 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import skamila.weather.ApiClient;
 import skamila.weather.api.forecast.Forecast;
 import skamila.weather.controller.WeatherMain;
 
 
-public class ApiClient extends AsyncTask<String, Integer, DownloadedData> {
-
+public class WeatherDownloader extends AsyncTask<String, Integer, DownloadedData> {
 
         private Context context;
         private String url;
 
-        public ApiClient(Context contex, String url){
+        public WeatherDownloader(Context contex, String url){
             this.context = contex;
             this.url = url;
         }
 
         @Override
         protected DownloadedData doInBackground(String... strings) {
-            try {
-                URL url = new URL(this.url);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = connection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder stringBuilder = new StringBuilder();
-                String string = "";
-                while((string = bufferedReader.readLine()) != null){
-                    stringBuilder.append(string);
-                }
-                return new DownloadedData(connection.getResponseCode(), stringBuilder.toString());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return ApiClient.sendRequest(url);
         }
 
         @Override

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,13 +13,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
+import skamila.weather.ApiClient;
 import skamila.weather.R;
-import skamila.weather.api.ApiClient;
+import skamila.weather.api.DownloadedData;
+import skamila.weather.api.WeatherDownloader;
 import skamila.weather.api.ApiController;
 import skamila.weather.api.Converter;
 import skamila.weather.api.FavoriteCitiesForecast;
@@ -36,6 +42,8 @@ public class WeatherMain extends AppCompatActivity {
     private ProgramData programData;
     final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
     final Fragment moreInformationFragment = new MoreInformationFragment();
+
+    String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + "Poznan" + "," + "pl" + "&appid=3758dae42d40b6cc1140947ed034389f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +79,26 @@ public class WeatherMain extends AppCompatActivity {
         d.setMessage("Wprowadź miasto");
         d.setView(dialogView);
 
+        Button ok = dialogView.findViewById(R.id.ok);
+        EditText input = dialogView.findViewById(R.id.input);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         final AlertDialog alertDialog = d.create();
+
+        ok.setOnClickListener(e -> {
+            input.getText();
+            DownloadedData downloadedData = ApiClient.sendRequest(url);
+            if(downloadedData.status == 200){
+                Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
+                forecastForCities.add(forecast.getCity(), forecast);
+                alertDialog.cancel();
+            } else {
+                Toast toast = Toast.makeText(this, "Incorrect name", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
 
         return alertDialog;
     }
@@ -79,15 +106,14 @@ public class WeatherMain extends AppCompatActivity {
     private void prepareForecast() {
         final FileManager fileManager = new FileManager(this, "data.txt");
         String data;
-        String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + "Poznan" + "," + "pl" + "&appid=3758dae42d40b6cc1140947ed034389f";
 
 //        if (programData.areDataActual()) {
         data = fileManager.loadFromFile();
 //        } else {
 //            if (isInternetConnection()) {
-                ApiClient apiClient = new ApiClient(this, url);
-                apiClient.execute();
-                //ApiController apiController = new ApiController(this, apiClient, fileManager);
+                WeatherDownloader weatherDownloader = new WeatherDownloader(this, url);
+                weatherDownloader.execute();
+                //ApiController apiController = new ApiController(this, weatherDownloader, fileManager);
                 //apiController.downloadForecast("Poznan", "pl", this);
                 //data = apiController.downloadForecast("Poznan", "pl");
 //            } else {

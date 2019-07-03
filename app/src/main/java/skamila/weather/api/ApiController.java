@@ -15,10 +15,10 @@ import static java.lang.Thread.sleep;
 public class ApiController {
 
     private Context context;
-    private ApiClient client;
+    private WeatherDownloader client;
     private FileManager fileManager;
 
-    public ApiController(Context context, ApiClient client, FileManager fileManager){
+    public ApiController(Context context, WeatherDownloader client, FileManager fileManager){
         this.context = context;
         this.client = client;
         this.fileManager = fileManager;
@@ -34,7 +34,7 @@ public class ApiController {
 //    public String downloadForecast(String city, String country, Context context){
 //
 //        String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + city + "," + country + "&appid=3758dae42d40b6cc1140947ed034389f";
-//        ApiClient apiClient = new ApiClient(context);
+//        WeatherDownloader apiClient = new WeatherDownloader(context);
 //        //client.loadResponse(context, url, fileManager);
 //        String forecast = client.getResponse();
 //
