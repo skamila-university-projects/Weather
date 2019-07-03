@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 import java.util.List;
 
@@ -31,11 +33,14 @@ import skamila.weather.api.Converter;
 import skamila.weather.api.FavoriteCitiesForecast;
 import skamila.weather.api.FileManager;
 import skamila.weather.api.ProgramData;
+import skamila.weather.api.forecast.City;
 import skamila.weather.api.forecast.Forecast;
 import skamila.weather.api.forecast.Weather;
 import skamila.weather.api.forecast.WeatherDescription;
 import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
+
+import static skamila.weather.api.ApiController.convertObjectToJson;
 
 public class WeatherMain extends AppCompatActivity {
 
@@ -43,8 +48,6 @@ public class WeatherMain extends AppCompatActivity {
     private ProgramData programData;
     final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
     final Fragment moreInformationFragment = new MoreInformationFragment();
-
-    String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + "Poznan" + "," + "pl" + "&appid=3758dae42d40b6cc1140947ed034389f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +57,32 @@ public class WeatherMain extends AppCompatActivity {
         forecastForCities = ViewModelProviders.of(this).get(FavoriteCitiesForecast.class);
         programData = ViewModelProviders.of(this).get(ProgramData.class);
 
+        FileManager fileManager = new FileManager(this, "data");
+        String s = fileManager.loadFromFile();
+        Gson g = new Gson();
+        if(!s.equals("")){
+            //todo przerobic na viewmodel
+            programData = g.fromJson(s, ProgramData.class);
+        } else {
+            programData = ViewModelProviders.of(this).get(ProgramData.class);
+        }
+
+
         prepareForecast();
         //displayData();
         prepareFragments();
         prepareButtons();
         prepareClickedComponents();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Gson g = new Gson();
+        String s = g.toJson(programData);
+        FileManager fm = new FileManager(this, "data");
+        fm.saveToFile(s);
     }
 
     private void prepareClickedComponents() {
@@ -98,6 +121,8 @@ public class WeatherMain extends AppCompatActivity {
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
                 forecastForCities.add(forecast.getCity(), forecast);
                 programData.addCity(forecast.getCity(), index);
+                FileManager fileManager = new FileManager(this, forecast.getCity().getName());
+                fileManager.saveToFile(convertObjectToJson(forecast));
                 city.setText(forecast.getCity().getName());
                 alertDialog.cancel();
             } else {
@@ -158,26 +183,27 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     private void prepareForecast() {
-        final FileManager fileManager = new FileManager(this, "data.txt");
-        String data;
 
-//        if (programData.areDataActual()) {
-        data = fileManager.loadFromFile();
-//        } else {
-//            if (isInternetConnection()) {
-        WeatherDownloader weatherDownloader = new WeatherDownloader(this, url);
-        weatherDownloader.execute();
-        //ApiController apiController = new ApiController(this, weatherDownloader, fileManager);
-        //apiController.downloadForecast("Poznan", "pl", this);
-        //data = apiController.downloadForecast("Poznan", "pl");
-//            } else {
-//                Toast.makeText(this, "No connection to the Internet. \n" +
-//                        "Data may be out of date.", Toast.LENGTH_LONG).show();
-//                data = fileManager.loadFromFile();
-//            }
-//        }
-
-//        fillBasicInformation();
+        for(City city : programData.getCitiesList()){
+            final FileManager fileManager = new FileManager(this, city.getName());
+            String data;
+            if (programData.areDataActual()) {
+                data = fileManager.loadFromFile();
+                Forecast forecast = ApiController.convertForecastToObject(data);
+                forecastForCities.add(forecast.getCity(), forecast);
+            } else {
+                if (isInternetConnection()) {
+                    WeatherDownloader weatherDownloader = new WeatherDownloader(this, getUrl(city));
+                    weatherDownloader.execute();
+                } else {
+                    Toast.makeText(this, "No connection to the Internet. \n" +
+                            "Data may be out of date.", Toast.LENGTH_LONG).show();
+                    data = fileManager.loadFromFile();
+                    Forecast forecast = ApiController.convertForecastToObject(data);
+                    forecastForCities.add(forecast.getCity(), forecast);
+                }
+            }
+        }
 
     }
 
@@ -190,6 +216,7 @@ public class WeatherMain extends AppCompatActivity {
         ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
         ((MoreInformationFragment) moreInformationFragment).refreshData();
         FileManager fileManager = new FileManager(this, forecast.getCity().getName());
+        fileManager.saveToFile(convertObjectToJson(forecast));
         programData.setTimestamp(new Date().getTime());
     }
 
@@ -322,6 +349,10 @@ public class WeatherMain extends AppCompatActivity {
         description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
 
         todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
+    }
+
+    private String getUrl(City city) {
+        return "https://api.openweathermap.org/data/2.5/forecast?q="  + city.getName() + "&appid=3758dae42d40b6cc1140947ed034389f";
     }
 
 }

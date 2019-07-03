@@ -66,5 +66,12 @@ public class ApiController {
 
     }
 
+    public static String convertObjectToJson(Forecast data){
+
+        Gson g = new Gson();
+        return g.toJson(data);
+
+    }
+
 
 }

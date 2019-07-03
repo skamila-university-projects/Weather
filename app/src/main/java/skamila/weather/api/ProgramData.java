@@ -26,7 +26,8 @@ public class ProgramData extends ViewModel {
     }
 
     public boolean areDataActual() {
-        return new Date().getTime() - timestamp <= 10800;
+        return true;
+        //return new Date().getTime() - timestamp <= 10800;
     }
 
     public List<City> getCitiesList() {
