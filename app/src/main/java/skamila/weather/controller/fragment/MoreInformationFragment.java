@@ -30,4 +30,8 @@ public class MoreInformationFragment extends Fragment {
         super.onAttach(context);
     }
 
+    public void refreshData(){
+
+    }
+
 }

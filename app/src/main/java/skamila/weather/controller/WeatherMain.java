@@ -7,17 +7,20 @@ import android.net.NetworkInfo;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import skamila.weather.R;
 import skamila.weather.api.ApiClient;
 import skamila.weather.api.ApiController;
+import skamila.weather.api.Converter;
 import skamila.weather.api.FavoriteCitiesForecast;
 import skamila.weather.api.FileManager;
 import skamila.weather.api.ProgramData;
@@ -27,10 +30,12 @@ import skamila.weather.api.forecast.WeatherDescription;
 import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class WeatherMain extends AppCompatActivity {
 
     private FavoriteCitiesForecast forecastForCities;
     private ProgramData programData;
+    final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
+    final Fragment moreInformationFragment = new MoreInformationFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,23 +46,50 @@ public class MainActivity extends AppCompatActivity {
         programData = ViewModelProviders.of(this).get(ProgramData.class);
 
         prepareForecast();
-        fillBasicInformation();
+        //displayData();
         prepareFragments();
         prepareButtons();
+        prepareClickedComponents();
 
+    }
+
+    private void prepareClickedComponents() {
+        ImageView refresh = findViewById(R.id.refresh);
+        ImageView localization = findViewById(R.id.localization);
+        localization.setOnClickListener(e -> {
+            AlertDialog alertDialog = prepareLocationDialog();
+            alertDialog.show();
+        });
+    }
+
+    private AlertDialog prepareLocationDialog(){
+
+        final AlertDialog.Builder d = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.localization, null);
+        d.setTitle("Lokalizacja");
+        d.setMessage("Wprowadź miasto");
+        d.setView(dialogView);
+
+        final AlertDialog alertDialog = d.create();
+
+        return alertDialog;
     }
 
     private void prepareForecast() {
         final FileManager fileManager = new FileManager(this, "data.txt");
         String data;
+        String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + "Poznan" + "," + "pl" + "&appid=3758dae42d40b6cc1140947ed034389f";
 
 //        if (programData.areDataActual()) {
         data = fileManager.loadFromFile();
 //        } else {
 //            if (isInternetConnection()) {
-//                ApiClient apiClient = new ApiClient();
-//                ApiController apiController = new ApiController(this, apiClient, fileManager);
-//                data = apiController.downloadForecast("Poznan", "pl");
+                ApiClient apiClient = new ApiClient(this, url);
+                apiClient.execute();
+                //ApiController apiController = new ApiController(this, apiClient, fileManager);
+                //apiController.downloadForecast("Poznan", "pl", this);
+                //data = apiController.downloadForecast("Poznan", "pl");
 //            } else {
 //                Toast.makeText(this, "No connection to the Internet. \n" +
 //                        "Data may be out of date.", Toast.LENGTH_LONG).show();
@@ -65,10 +97,17 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
 
+//        fillBasicInformation();
+
+    }
+
+    public void prepareForecast(String data) {
         Forecast forecast = ApiController.convertForecastToObject(data);
-        //TODO rozwiązać problem z danymi, które długo się pobierają
         forecastForCities.add(forecast.getCity(), forecast);
         programData.setActualCity(forecast.getCity());
+        fillBasicInformation();
+        ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+        ((MoreInformationFragment) moreInformationFragment).refreshData();
     }
 
     private boolean isInternetConnection() {
@@ -105,8 +144,6 @@ public class MainActivity extends AppCompatActivity {
     private void prepareFragments() {
 
         ViewPager viewPager = findViewById(R.id.viewPager);
-        final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
-        final Fragment moreInformationFragment = new MoreInformationFragment();
 
         FragmentPagerAdapter pagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -183,6 +220,25 @@ public class MainActivity extends AppCompatActivity {
 
     public ProgramData getProgramData() {
         return programData;
+    }
+
+    public void displayData(){
+        TextView city = findViewById(R.id.city);
+        ImageView todayIcon = findViewById(R.id.todayIcon);
+        TextView description = findViewById(R.id.description);
+        TextView actualTemp = findViewById(R.id.actualTemp);
+        TextView temp = findViewById(R.id.temp);
+
+        city.setText(programData.getActualCity().getName() +", " + programData.getActualCity().getCountry());
+        Forecast forecast = forecastForCities.getForecast(programData.getActualCity());
+        temp.setText(Converter.toMinManString(
+                Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
+                Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_min(), programData.getUnit()),
+                programData.getUnitSymbol()
+                ));
+        description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
+
+        todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
     }
 
 }

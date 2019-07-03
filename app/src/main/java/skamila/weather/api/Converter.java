@@ -8,9 +8,9 @@ public class Converter {
 
     public static double toGoodUnit(double temp, Unit unit){
         if(unit == Unit.CELSIUM){
-            return Double.parseDouble(String.format(Locale.getDefault(), "%.2f", temp - 273.15));
+            return Double.parseDouble(String.format(Locale.getDefault(), "%.1f", temp - 273.15));
         } else {
-            return Double.parseDouble(String.format(Locale.getDefault(), "%.2f", temp));
+            return Double.parseDouble(String.format(Locale.getDefault(), "%.1f", temp));
         }
     }
 

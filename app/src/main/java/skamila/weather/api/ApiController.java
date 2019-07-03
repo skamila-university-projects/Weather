@@ -10,6 +10,8 @@ import java.io.IOException;
 import skamila.weather.api.current_weather.CurrentWeather;
 import skamila.weather.api.forecast.Forecast;
 
+import static java.lang.Thread.sleep;
+
 public class ApiController {
 
     private Context context;
@@ -22,19 +24,23 @@ public class ApiController {
         this.fileManager = fileManager;
     }
 
-    public String downloadCurrentWeather(String city, String country){
+//    public String downloadCurrentWeather(String city, String country){
+//
+//        String url = "https://api.openweathermap.org/data/2.5/weather?q="  + city + "," + country + "&appid=3758dae42d40b6cc1140947ed034389f";
+//        return client.loadResponse(context, url, fileManager);
+//
+//    }
 
-        String url = "https://api.openweathermap.org/data/2.5/weather?q="  + city + "," + country + "&appid=3758dae42d40b6cc1140947ed034389f";
-        return client.getResponse(context, url, fileManager);
-
-    }
-
-    public String downloadForecast(String city, String country){
-
-        String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + city + "," + country + "&appid=3758dae42d40b6cc1140947ed034389f";
-        return client.getResponse(context, url, fileManager);
-
-    }
+//    public String downloadForecast(String city, String country, Context context){
+//
+//        String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + city + "," + country + "&appid=3758dae42d40b6cc1140947ed034389f";
+//        ApiClient apiClient = new ApiClient(context);
+//        //client.loadResponse(context, url, fileManager);
+//        String forecast = client.getResponse();
+//
+//        //System.out.println(client.getResponse());
+//        return client.getResponse();
+//    }
 
     public static CurrentWeather convertCurrentWeatherToObject(String data){
 

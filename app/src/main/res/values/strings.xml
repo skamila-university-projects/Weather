@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Weather</string>
+
+    <string name="localization">lokalizacja</string>
+    <string name="sunrise">wschód</string>
+    <string name="sunset">zachód</string>
+    <string name="azimuth">azymut</string>
+    <string name="twilight_evening">zmierzch cywilny</string>
+    <string name="twilight_morning">świt cywilny</string>
+    <string name="new_moon">nów</string>
+    <string name="full_moon">pełnia</string>
+    <string name="lunar_phase">faza</string>
+    <string name="lunation">lunacja</string>
+    <string name="settings_location">Zmień współrzędne geograficzne</string>
+    <string name="settings_refresh">Zmień odświeżanie</string>
+    <string name="latitude">szerokość</string>
+    <string name="longitude">długość</string>
 </resources>
