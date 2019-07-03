@@ -29,7 +29,7 @@ public class ApiClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return new DownloadedData(-1, "");
 
     }
 

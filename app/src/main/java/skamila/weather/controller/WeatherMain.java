@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.List;
 
 import skamila.weather.ApiClient;
@@ -64,17 +65,18 @@ public class WeatherMain extends AppCompatActivity {
     private void prepareClickedComponents() {
         ImageView refresh = findViewById(R.id.refresh);
         ImageView localization = findViewById(R.id.localization);
+
         localization.setOnClickListener(e -> {
             AlertDialog alertDialog = prepareLocationDialog();
             alertDialog.show();
         });
     }
 
-    private AlertDialog prepareLocationDialog(){
+    private AlertDialog prepareNewLocationDialog(int index, TextView city){
 
         final AlertDialog.Builder d = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.localization, null);
+        View dialogView = inflater.inflate(R.layout.add_localization, null);
         d.setTitle("Lokalizacja");
         d.setMessage("Wprowadź miasto");
         d.setView(dialogView);
@@ -87,17 +89,69 @@ public class WeatherMain extends AppCompatActivity {
 
         final AlertDialog alertDialog = d.create();
 
+
         ok.setOnClickListener(e -> {
             input.getText();
+            String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + input.getText() + "&appid=3758dae42d40b6cc1140947ed034389f";
             DownloadedData downloadedData = ApiClient.sendRequest(url);
             if(downloadedData.status == 200){
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
                 forecastForCities.add(forecast.getCity(), forecast);
+                programData.addCity(forecast.getCity(), index);
+                city.setText(forecast.getCity().getName());
                 alertDialog.cancel();
             } else {
                 Toast toast = Toast.makeText(this, "Incorrect name", Toast.LENGTH_LONG);
                 toast.show();
             }
+        });
+
+        return alertDialog;
+    }
+
+    private AlertDialog prepareLocationDialog(){
+
+        final AlertDialog.Builder d = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.localization, null);
+        d.setTitle("Lokalizacja");
+        d.setMessage("Wprowadź miasto");
+        d.setView(dialogView);
+
+        TextView city1 = dialogView.findViewById(R.id.city1);
+        Button change1 = dialogView.findViewById(R.id.change1);
+        TextView city2 = dialogView.findViewById(R.id.city2);
+        Button change2 = dialogView.findViewById(R.id.change2);
+        TextView city3 = dialogView.findViewById(R.id.city3);
+        Button change3 = dialogView.findViewById(R.id.change3);
+        TextView city4 = dialogView.findViewById(R.id.city4);
+        Button change4 = dialogView.findViewById(R.id.change4);
+
+        final AlertDialog alertDialog = d.create();
+
+        city1.setText(programData.getCitiesList().get(0).getName());
+        if(programData.getCitiesList().size() > 1) city2.setText(programData.getCitiesList().get(1).getName());
+        if(programData.getCitiesList().size() > 2) city3.setText(programData.getCitiesList().get(2).getName());
+        if(programData.getCitiesList().size() > 3) city4.setText(programData.getCitiesList().get(3).getName());
+
+        change1.setOnClickListener(e -> {
+            AlertDialog alertDialog2 = prepareNewLocationDialog(0, city1);
+            alertDialog2.show();
+        });
+
+        change2.setOnClickListener(e -> {
+            AlertDialog alertDialog2 = prepareNewLocationDialog(1, city2);
+            alertDialog2.show();
+        });
+
+        change3.setOnClickListener(e -> {
+            AlertDialog alertDialog2 = prepareNewLocationDialog(2, city3);
+            alertDialog2.show();
+        });
+
+        change4.setOnClickListener(e -> {
+            AlertDialog alertDialog2 = prepareNewLocationDialog(3, city4);
+            alertDialog2.show();
         });
 
         return alertDialog;
@@ -111,11 +165,11 @@ public class WeatherMain extends AppCompatActivity {
         data = fileManager.loadFromFile();
 //        } else {
 //            if (isInternetConnection()) {
-                WeatherDownloader weatherDownloader = new WeatherDownloader(this, url);
-                weatherDownloader.execute();
-                //ApiController apiController = new ApiController(this, weatherDownloader, fileManager);
-                //apiController.downloadForecast("Poznan", "pl", this);
-                //data = apiController.downloadForecast("Poznan", "pl");
+        WeatherDownloader weatherDownloader = new WeatherDownloader(this, url);
+        weatherDownloader.execute();
+        //ApiController apiController = new ApiController(this, weatherDownloader, fileManager);
+        //apiController.downloadForecast("Poznan", "pl", this);
+        //data = apiController.downloadForecast("Poznan", "pl");
 //            } else {
 //                Toast.makeText(this, "No connection to the Internet. \n" +
 //                        "Data may be out of date.", Toast.LENGTH_LONG).show();
@@ -130,10 +184,13 @@ public class WeatherMain extends AppCompatActivity {
     public void prepareForecast(String data) {
         Forecast forecast = ApiController.convertForecastToObject(data);
         forecastForCities.add(forecast.getCity(), forecast);
+        programData.addCity(forecast.getCity(), 0);
         programData.setActualCity(forecast.getCity());
         fillBasicInformation();
         ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
         ((MoreInformationFragment) moreInformationFragment).refreshData();
+        FileManager fileManager = new FileManager(this, forecast.getCity().getName());
+        programData.setTimestamp(new Date().getTime());
     }
 
     private boolean isInternetConnection() {
@@ -261,7 +318,7 @@ public class WeatherMain extends AppCompatActivity {
                 Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
                 Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_min(), programData.getUnit()),
                 programData.getUnitSymbol()
-                ));
+        ));
         description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
 
         todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));

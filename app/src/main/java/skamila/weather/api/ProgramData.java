@@ -3,6 +3,7 @@ package skamila.weather.api;
 import android.arch.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import skamila.weather.api.forecast.City;
@@ -10,7 +11,7 @@ import skamila.weather.api.forecast.Unit;
 
 public class ProgramData extends ViewModel {
 
-    private String lastUpdateDate;
+    private long timestamp;
     private List<City> cities;
     private City actualCity;
     private Unit unit;
@@ -20,8 +21,12 @@ public class ProgramData extends ViewModel {
         unit = Unit.CELSIUM;
     }
 
+    public void setTimestamp(long timestamp){
+        this.timestamp = timestamp;
+    }
+
     public boolean areDataActual() {
-        return true;
+        return new Date().getTime() - timestamp <= 10800;
     }
 
     public List<City> getCitiesList() {
@@ -30,6 +35,10 @@ public class ProgramData extends ViewModel {
 
     public void addCity(City city) {
         cities.add(city);
+    }
+
+    public void addCity(City city, int index) {
+        cities.add(index, city);
     }
 
     public void deleteCity(City city) {
