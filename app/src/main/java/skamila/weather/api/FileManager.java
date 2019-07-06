@@ -18,7 +18,7 @@ public class FileManager {
 
     public FileManager(Context context, String fileName){
         this.context = context;
-        this.fileName = fileName;
+        this.fileName = fileName + ".txt";
     }
 
     public void saveToFile(String text) {

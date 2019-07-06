@@ -1,9 +1,11 @@
 package skamila.weather.api;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import skamila.weather.api.forecast.City;
@@ -11,7 +13,7 @@ import skamila.weather.api.forecast.Unit;
 
 public class ProgramData extends ViewModel {
 
-    private long timestamp;
+    private long updateTime;
     private List<City> cities;
     private City actualCity;
     private Unit unit;
@@ -21,13 +23,24 @@ public class ProgramData extends ViewModel {
         unit = Unit.CELSIUM;
     }
 
-    public void setTimestamp(long timestamp){
-        this.timestamp = timestamp;
+    public static ProgramData loadProgramData(Activity activity){
+        FileManager fileManager = new FileManager(activity, "data");
+        String s = fileManager.loadFromFile();
+        if(!s.equals("")){
+            Gson g = new Gson();
+            return g.fromJson(s, ProgramData.class);
+        } else {
+            return new ProgramData();
+        }
+    }
+
+    public void setUpdateTime(long updateTime){
+        this.updateTime = updateTime;
     }
 
     public boolean areDataActual() {
         return true;
-        //return new Date().getTime() - timestamp <= 10800;
+        //return new Date().getTime() - updateTime <= 10800;
     }
 
     public List<City> getCitiesList() {
@@ -54,11 +67,13 @@ public class ProgramData extends ViewModel {
         actualCity = city;
     }
 
-    public char getUnitSymbol(){
+    public String getUnitSymbol(){
         if(unit == Unit.CELSIUM){
-            return '°';
+            return "°";
+        } else if(unit == Unit.FAHRENHEIT) {
+            return "ºF";
         } else {
-            return 'K';
+            return "K";
         }
     }
 

@@ -12,6 +12,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,7 +25,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.util.Date;
-import java.util.List;
 
 import skamila.weather.ApiClient;
 import skamila.weather.R;
@@ -55,25 +57,13 @@ public class WeatherMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         forecastForCities = ViewModelProviders.of(this).get(FavoriteCitiesForecast.class);
-        programData = ViewModelProviders.of(this).get(ProgramData.class);
-
-        FileManager fileManager = new FileManager(this, "data");
-        String s = fileManager.loadFromFile();
-        Gson g = new Gson();
-        if(!s.equals("")){
-            //todo przerobic na viewmodel
-            programData = g.fromJson(s, ProgramData.class);
-        } else {
-            programData = ViewModelProviders.of(this).get(ProgramData.class);
-        }
+        //TODO obrót ekranu, view model jak się da
+        programData = ProgramData.loadProgramData(this);
 
 
-        prepareForecast();
-        //displayData();
         prepareFragments();
-        prepareButtons();
-        prepareClickedComponents();
-
+        loadOrDownloadForecast();
+        displayData();
     }
 
     @Override
@@ -85,14 +75,31 @@ public class WeatherMain extends AppCompatActivity {
         fm.saveToFile(s);
     }
 
-    private void prepareClickedComponents() {
-        ImageView refresh = findViewById(R.id.refresh);
-        ImageView localization = findViewById(R.id.localization);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
 
-        localization.setOnClickListener(e -> {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        if(item.getItemId() == R.id.refresh){
+            refresh();
+            Toast toast = Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG);
+            toast.show();
+            return true;
+        } else if(item.getItemId() == R.id.localization){
             AlertDialog alertDialog = prepareLocationDialog();
             alertDialog.show();
-        });
+            return true;
+        } else if(item.getItemId() == R.id.unitChange){
+            return true;
+        }
+
+        return false;
+
     }
 
     private AlertDialog prepareNewLocationDialog(int index, TextView city){
@@ -182,7 +189,7 @@ public class WeatherMain extends AppCompatActivity {
         return alertDialog;
     }
 
-    private void prepareForecast() {
+    private void loadOrDownloadForecast() {
 
         for(City city : programData.getCitiesList()){
             final FileManager fileManager = new FileManager(this, city.getName());
@@ -212,43 +219,18 @@ public class WeatherMain extends AppCompatActivity {
         forecastForCities.add(forecast.getCity(), forecast);
         programData.addCity(forecast.getCity(), 0);
         programData.setActualCity(forecast.getCity());
-        fillBasicInformation();
+        displayData();
         ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
         ((MoreInformationFragment) moreInformationFragment).refreshData();
         FileManager fileManager = new FileManager(this, forecast.getCity().getName());
         fileManager.saveToFile(convertObjectToJson(forecast));
-        programData.setTimestamp(new Date().getTime());
+        programData.setUpdateTime(new Date().getTime());
     }
 
     private boolean isInternetConnection() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    private void fillBasicInformation() {
-        TextView cityTextView = findViewById(R.id.city);
-        TextView actualTempTextView = findViewById(R.id.actualTemp);
-        TextView tempTextView = findViewById(R.id.temp);
-        TextView descriptionTextView = findViewById(R.id.description);
-        ImageView todayIcon = findViewById(R.id.todayIcon);
-
-        cityTextView.setText(programData.getActualCity().getName() + ", "
-                + programData.getActualCity().getCountry());
-
-        List<Weather> weatherList = forecastForCities.getForecast(programData.getActualCity()).getList();
-
-        double actualTemp = Math.round(weatherList.get(0).getMain().getTemp() - 273.15);
-        double tempMax = Math.round(weatherList.get(0).getMain().getTemp_max() - 273.15);
-        double tempMin = Math.round(weatherList.get(0).getMain().getTemp_min() - 273.15);
-
-        actualTempTextView.setText(actualTemp + "°");
-        tempTextView.setText(tempMax + "° / " + tempMin + "°");
-
-        List<WeatherDescription> weatherDescriptions = weatherList.get(0).getWeather();
-
-        descriptionTextView.setText(weatherDescriptions.get(0).getDescription());
-        todayIcon.setImageResource(getIconId(weatherDescriptions.get(0).getIcon()));
     }
 
     private void prepareFragments() {
@@ -273,17 +255,6 @@ public class WeatherMain extends AppCompatActivity {
 
         viewPager.setAdapter(pagerAdapter);
 
-    }
-
-    private void prepareButtons() {
-        ImageView localization = findViewById(R.id.localization);
-        localization.setOnClickListener(e -> {
-            setLocalization();
-        });
-        ImageView refresh = findViewById(R.id.refresh);
-        refresh.setOnClickListener(e -> {
-            refresh();
-        });
     }
 
     private void setLocalization() {
@@ -333,22 +304,28 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     public void displayData(){
-        TextView city = findViewById(R.id.city);
-        ImageView todayIcon = findViewById(R.id.todayIcon);
-        TextView description = findViewById(R.id.description);
-        TextView actualTemp = findViewById(R.id.actualTemp);
-        TextView temp = findViewById(R.id.temp);
 
-        city.setText(programData.getActualCity().getName() +", " + programData.getActualCity().getCountry());
-        Forecast forecast = forecastForCities.getForecast(programData.getActualCity());
-        temp.setText(Converter.toMinManString(
-                Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
-                Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_min(), programData.getUnit()),
-                programData.getUnitSymbol()
-        ));
-        description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
+        if(programData.getActualCity() != null){
 
-        todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
+            TextView city = findViewById(R.id.city);
+            ImageView todayIcon = findViewById(R.id.todayIcon);
+            TextView description = findViewById(R.id.description);
+            TextView actualTemp = findViewById(R.id.actualTemp);
+            TextView temp = findViewById(R.id.temp);
+
+            city.setText(programData.getActualCity().getName() +", " + programData.getActualCity().getCountry());
+            Forecast forecast = forecastForCities.getForecast(programData.getActualCity());
+            temp.setText(Converter.toMinMaxTemp(
+                    Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
+                    Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_min(), programData.getUnit()),
+                    programData.getUnitSymbol()
+            ));
+
+            description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
+
+            todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
+        }
+
     }
 
     private String getUrl(City city) {

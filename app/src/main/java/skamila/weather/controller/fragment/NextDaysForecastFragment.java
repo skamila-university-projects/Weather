@@ -52,7 +52,7 @@ public class NextDaysForecastFragment extends Fragment {
             TextView day = view.findViewById(componentDayID[i]);
             day.setText(weather.getDt_txt().substring(0, 10));
             TextView forecastPerDay = view.findViewById(componentForecastID[i]);
-            forecastPerDay.setText(toMinManString(toGoodUnit(weather.getMain().getTemp_max(), programData.getUnit()), toGoodUnit(weather.getMain().getTemp_min(), programData.getUnit()), programData.getUnitSymbol()));
+            forecastPerDay.setText(toMinMaxTemp(toGoodUnit(weather.getMain().getTemp_max(), programData.getUnit()), toGoodUnit(weather.getMain().getTemp_min(), programData.getUnit()), programData.getUnitSymbol()));
             int iconID = ((WeatherMain) getActivity()).getIconId(forecast.getList().get(0).getWeather().get(0).getIcon());
             ImageView icon = view.findViewById(componentIconID[i]);
             icon.setImageResource(iconID);
