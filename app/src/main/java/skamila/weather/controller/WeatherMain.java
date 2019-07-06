@@ -2,6 +2,7 @@ package skamila.weather.controller;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.StrictMode;
@@ -37,8 +38,6 @@ import skamila.weather.api.FileManager;
 import skamila.weather.api.ProgramData;
 import skamila.weather.api.forecast.City;
 import skamila.weather.api.forecast.Forecast;
-import skamila.weather.api.forecast.Weather;
-import skamila.weather.api.forecast.WeatherDescription;
 import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
@@ -58,8 +57,8 @@ public class WeatherMain extends AppCompatActivity {
         setContentView(R.layout.main);
         forecastForCities = ViewModelProviders.of(this).get(FavoriteCitiesForecast.class);
         //TODO obrót ekranu, view model jak się da
-        programData = ProgramData.loadProgramData(this);
-
+        programData = ProgramData.getInstance();
+        programData.loadProgramData(this);
 
         prepareFragments();
         loadOrDownloadForecast();
@@ -86,16 +85,17 @@ public class WeatherMain extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
 
         if(item.getItemId() == R.id.refresh){
+
             refresh();
             Toast toast = Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG);
             toast.show();
             return true;
-        } else if(item.getItemId() == R.id.localization){
-            AlertDialog alertDialog = prepareLocationDialog();
-            alertDialog.show();
+
+        } else if(item.getItemId() == R.id.settings){
+
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
-        } else if(item.getItemId() == R.id.unitChange){
-            return true;
+
         }
 
         return false;

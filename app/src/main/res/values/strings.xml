@@ -2,5 +2,7 @@
     <string name="app_name">Weather</string>
     <string name="refresh">Refresh</string>
     <string name="localization">Localization</string>
-    <string name="unit_change">Change unit</string>
+    <string name="unit">Unit</string>
+    <string name="new_city">New city</string>
+    <string name="settings">Settings</string>
 </resources>

@@ -13,24 +13,27 @@ import skamila.weather.api.forecast.Unit;
 
 public class ProgramData extends ViewModel {
 
+    private static ProgramData instance = new ProgramData();
     private long updateTime;
     private List<City> cities;
     private City actualCity;
     private Unit unit;
 
-    public ProgramData() {
+    private ProgramData() {
         cities = new ArrayList<>();
         unit = Unit.CELSIUM;
     }
 
-    public static ProgramData loadProgramData(Activity activity){
+    public static ProgramData getInstance(){
+        return instance;
+    }
+
+    public void loadProgramData(Activity activity){
         FileManager fileManager = new FileManager(activity, "data");
         String s = fileManager.loadFromFile();
         if(!s.equals("")){
             Gson g = new Gson();
-            return g.fromJson(s, ProgramData.class);
-        } else {
-            return new ProgramData();
+            instance = g.fromJson(s, ProgramData.class);
         }
     }
 
@@ -65,6 +68,10 @@ public class ProgramData extends ViewModel {
 
     public void setActualCity(City city) {
         actualCity = city;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     public String getUnitSymbol(){
