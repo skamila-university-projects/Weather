@@ -10,21 +10,26 @@ import skamila.weather.api.forecast.Forecast;
 
 public class FavoriteCitiesForecast extends ViewModel {
 
+    private static FavoriteCitiesForecast favoriteCitiesForecast = new FavoriteCitiesForecast();
     private Map<Integer, Forecast> forecast;
 
-    public FavoriteCitiesForecast(){
+    private FavoriteCitiesForecast() {
         forecast = new HashMap<>();
     }
 
-    public Forecast getForecast(City city){
+    public static FavoriteCitiesForecast getInstance() {
+        return favoriteCitiesForecast;
+    }
+
+    public Forecast getForecast(City city) {
         return forecast.get(city.getId());
     }
 
-    public void add(City city, Forecast forecast){
+    public void add(City city, Forecast forecast) {
         this.forecast.put(city.getId(), forecast);
     }
 
-    public void delete(City city){
+    public void delete(City city) {
         forecast.remove(city.getId());
     }
 

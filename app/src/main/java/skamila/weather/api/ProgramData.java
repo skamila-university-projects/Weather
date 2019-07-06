@@ -24,20 +24,32 @@ public class ProgramData extends ViewModel {
         unit = Unit.CELSIUM;
     }
 
-    public static ProgramData getInstance(){
+    public static String getURL(String cityName) {
+        return "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=3758dae42d40b6cc1140947ed034389f";
+    }
+
+    public static String getURL(String cityName, String country) {
+        return "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + ", " + country + "&appid=3758dae42d40b6cc1140947ed034389f";
+    }
+
+    public static ProgramData getInstance() {
         return instance;
     }
 
-    public void loadProgramData(Activity activity){
+    public void loadProgramData(Activity activity) {
         FileManager fileManager = new FileManager(activity, "data");
         String s = fileManager.loadFromFile();
-        if(!s.equals("")){
+        if (!s.equals("")) {
             Gson g = new Gson();
             instance = g.fromJson(s, ProgramData.class);
         }
     }
 
-    public void setUpdateTime(long updateTime){
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -74,10 +86,10 @@ public class ProgramData extends ViewModel {
         this.unit = unit;
     }
 
-    public String getUnitSymbol(){
-        if(unit == Unit.CELSIUM){
+    public String getUnitSymbol() {
+        if (unit == Unit.CELSIUM) {
             return "°";
-        } else if(unit == Unit.FAHRENHEIT) {
+        } else if (unit == Unit.FAHRENHEIT) {
             return "ºF";
         } else {
             return "K";

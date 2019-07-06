@@ -13,7 +13,7 @@ import skamila.weather.R;
 public class MoreInformationFragment extends Fragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
@@ -26,11 +26,11 @@ public class MoreInformationFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
     }
 
-    public void refreshData(){
+    public void refreshData() {
 
     }
 

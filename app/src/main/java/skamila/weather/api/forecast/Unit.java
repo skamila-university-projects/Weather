@@ -1,5 +1,5 @@
 package skamila.weather.api.forecast;
 
-public enum  Unit {
+public enum Unit {
     KELVIN, CELSIUM, FAHRENHEIT
 }

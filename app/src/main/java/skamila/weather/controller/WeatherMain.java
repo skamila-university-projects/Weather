@@ -55,8 +55,11 @@ public class WeatherMain extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        forecastForCities = ViewModelProviders.of(this).get(FavoriteCitiesForecast.class);
-        //TODO obrót ekranu, view model jak się da
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        forecastForCities = FavoriteCitiesForecast.getInstance();
         programData = ProgramData.getInstance();
         programData.loadProgramData(this);
 
@@ -66,8 +69,8 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         Gson g = new Gson();
         String s = g.toJson(programData);
         FileManager fm = new FileManager(this, "data");
@@ -75,23 +78,23 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.refresh){
+        if (item.getItemId() == R.id.refresh) {
 
             refresh();
             Toast toast = Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG);
             toast.show();
             return true;
 
-        } else if(item.getItemId() == R.id.settings){
+        } else if (item.getItemId() == R.id.settings) {
 
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
@@ -102,7 +105,7 @@ public class WeatherMain extends AppCompatActivity {
 
     }
 
-    private AlertDialog prepareNewLocationDialog(int index, TextView city){
+    private AlertDialog prepareNewLocationDialog(int index, TextView city) {
 
         final AlertDialog.Builder d = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -114,17 +117,12 @@ public class WeatherMain extends AppCompatActivity {
         Button ok = dialogView.findViewById(R.id.ok);
         EditText input = dialogView.findViewById(R.id.input);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
         final AlertDialog alertDialog = d.create();
-
 
         ok.setOnClickListener(e -> {
             input.getText();
-            String url = "https://api.openweathermap.org/data/2.5/forecast?q="  + input.getText() + "&appid=3758dae42d40b6cc1140947ed034389f";
-            DownloadedData downloadedData = ApiClient.sendRequest(url);
-            if(downloadedData.status == 200){
+            DownloadedData downloadedData = ApiClient.sendRequest(ProgramData.getURL(input.getText().toString()));
+            if (downloadedData.status == 200) {
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
                 forecastForCities.add(forecast.getCity(), forecast);
                 programData.addCity(forecast.getCity(), index);
@@ -141,7 +139,7 @@ public class WeatherMain extends AppCompatActivity {
         return alertDialog;
     }
 
-    private AlertDialog prepareLocationDialog(){
+    private AlertDialog prepareLocationDialog() {
 
         final AlertDialog.Builder d = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -162,9 +160,12 @@ public class WeatherMain extends AppCompatActivity {
         final AlertDialog alertDialog = d.create();
 
         city1.setText(programData.getCitiesList().get(0).getName());
-        if(programData.getCitiesList().size() > 1) city2.setText(programData.getCitiesList().get(1).getName());
-        if(programData.getCitiesList().size() > 2) city3.setText(programData.getCitiesList().get(2).getName());
-        if(programData.getCitiesList().size() > 3) city4.setText(programData.getCitiesList().get(3).getName());
+        if (programData.getCitiesList().size() > 1)
+            city2.setText(programData.getCitiesList().get(1).getName());
+        if (programData.getCitiesList().size() > 2)
+            city3.setText(programData.getCitiesList().get(2).getName());
+        if (programData.getCitiesList().size() > 3)
+            city4.setText(programData.getCitiesList().get(3).getName());
 
         change1.setOnClickListener(e -> {
             AlertDialog alertDialog2 = prepareNewLocationDialog(0, city1);
@@ -191,7 +192,7 @@ public class WeatherMain extends AppCompatActivity {
 
     private void loadOrDownloadForecast() {
 
-        for(City city : programData.getCitiesList()){
+        for (City city : programData.getCitiesList()) {
             final FileManager fileManager = new FileManager(this, city.getName());
             String data;
             if (programData.areDataActual()) {
@@ -200,7 +201,7 @@ public class WeatherMain extends AppCompatActivity {
                 forecastForCities.add(forecast.getCity(), forecast);
             } else {
                 if (isInternetConnection()) {
-                    WeatherDownloader weatherDownloader = new WeatherDownloader(this, getUrl(city));
+                    WeatherDownloader weatherDownloader = new WeatherDownloader(this, ProgramData.getURL(city.getName()));
                     weatherDownloader.execute();
                 } else {
                     Toast.makeText(this, "No connection to the Internet. \n" +
@@ -303,9 +304,9 @@ public class WeatherMain extends AppCompatActivity {
         return programData;
     }
 
-    public void displayData(){
+    public void displayData() {
 
-        if(programData.getActualCity() != null){
+        if (programData.getActualCity() != null) {
 
             TextView city = findViewById(R.id.city);
             ImageView todayIcon = findViewById(R.id.todayIcon);
@@ -313,7 +314,7 @@ public class WeatherMain extends AppCompatActivity {
             TextView actualTemp = findViewById(R.id.actualTemp);
             TextView temp = findViewById(R.id.temp);
 
-            city.setText(programData.getActualCity().getName() +", " + programData.getActualCity().getCountry());
+            city.setText(programData.getActualCity().getName() + ", " + programData.getActualCity().getCountry());
             Forecast forecast = forecastForCities.getForecast(programData.getActualCity());
             temp.setText(Converter.toMinMaxTemp(
                     Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
@@ -326,10 +327,6 @@ public class WeatherMain extends AppCompatActivity {
             todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
         }
 
-    }
-
-    private String getUrl(City city) {
-        return "https://api.openweathermap.org/data/2.5/forecast?q="  + city.getName() + "&appid=3758dae42d40b6cc1140947ed034389f";
     }
 
 }

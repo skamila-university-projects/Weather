@@ -3,7 +3,7 @@
 
     <EditTextPreference
         android:defaultValue="City, Country"
-        android:key="@string/new_city"
+        android:key="newCity"
         android:selectAllOnFocus="true"
         android:singleLine="true"
         android:title="@string/new_city" />

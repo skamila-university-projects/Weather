@@ -12,7 +12,7 @@ public class ApiController {
     private WeatherDownloader client;
     private FileManager fileManager;
 
-    public ApiController(Context context, WeatherDownloader client, FileManager fileManager){
+    public ApiController(Context context, WeatherDownloader client, FileManager fileManager) {
 
         this.context = context;
         this.client = client;
@@ -20,14 +20,14 @@ public class ApiController {
 
     }
 
-    public static Forecast convertForecastToObject(String data){
+    public static Forecast convertForecastToObject(String data) {
 
         Gson g = new Gson();
         return g.fromJson(data, Forecast.class);
 
     }
 
-    public static String convertObjectToJson(Forecast data){
+    public static String convertObjectToJson(Forecast data) {
 
         Gson g = new Gson();
         return g.toJson(data);

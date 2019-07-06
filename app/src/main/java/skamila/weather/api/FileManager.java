@@ -16,7 +16,7 @@ public class FileManager {
     private Context context;
     private String fileName;
 
-    public FileManager(Context context, String fileName){
+    public FileManager(Context context, String fileName) {
         this.context = context;
         this.fileName = fileName + ".txt";
     }

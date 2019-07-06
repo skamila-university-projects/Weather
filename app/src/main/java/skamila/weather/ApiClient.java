@@ -20,7 +20,7 @@ public class ApiClient {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
             String string = "";
-            while((string = bufferedReader.readLine()) != null){
+            while ((string = bufferedReader.readLine()) != null) {
                 stringBuilder.append(string);
             }
             return new DownloadedData(connection.getResponseCode(), stringBuilder.toString());

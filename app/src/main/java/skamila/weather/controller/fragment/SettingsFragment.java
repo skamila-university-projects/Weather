@@ -4,18 +4,25 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import skamila.weather.ApiClient;
 import skamila.weather.R;
+import skamila.weather.api.ApiController;
+import skamila.weather.api.DownloadedData;
+import skamila.weather.api.FavoriteCitiesForecast;
+import skamila.weather.api.FileManager;
 import skamila.weather.api.ProgramData;
 import skamila.weather.api.forecast.City;
+import skamila.weather.api.forecast.Forecast;
 import skamila.weather.api.forecast.Unit;
 
-public class SettingsFragment extends PreferenceFragment {
+import static skamila.weather.api.ApiController.convertObjectToJson;
 
-    List<String> cities = new ArrayList<>();
+public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,23 @@ public class SettingsFragment extends PreferenceFragment {
     private void prepareNewCity() {
 
         EditTextPreference newCity = (EditTextPreference) findPreference("newCity");
+        newCity.setOnPreferenceChangeListener((a, b) -> {
+            DownloadedData downloadedData = ApiClient.sendRequest(ProgramData.getURL(b.toString()));
+            if (downloadedData.status == 200) {
+                Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
+                ProgramData programData = ProgramData.getInstance();
+                FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
+                favoriteCitiesForecast.add(forecast.getCity(), forecast);
+                programData.addCity(forecast.getCity());
+                FileManager fileManager = new FileManager(this.getContext(), forecast.getCity().getName());
+                fileManager.saveToFile(convertObjectToJson(forecast));
+            } else {
+                Toast toast = Toast.makeText(this.getContext(), "Incorrect name", Toast.LENGTH_LONG);
+                toast.show();
+            }
+            prepareCityList();
+            return true;
+        });
 
     }
 

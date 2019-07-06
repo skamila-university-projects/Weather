@@ -37,8 +37,9 @@ public class NextDaysForecastFragment extends Fragment {
 
     public void refreshData() {
 
-        FavoriteCitiesForecast favoriteCitiesForecast = ((WeatherMain) getActivity()).getForecastForCities();
-        ProgramData programData = ((WeatherMain) getActivity()).getProgramData();
+        WeatherMain activity = (WeatherMain) getActivity();
+        FavoriteCitiesForecast favoriteCitiesForecast = activity.getForecastForCities();
+        ProgramData programData = activity.getProgramData();
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
 
         int[] componentIconID = {R.id.icon1, R.id.icon2, R.id.icon3};
@@ -64,7 +65,6 @@ public class NextDaysForecastFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
     }
-
 
 
 }
