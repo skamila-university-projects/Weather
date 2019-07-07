@@ -15,9 +15,6 @@ import skamila.weather.FavoriteCitiesForecast;
 import skamila.weather.ProgramData;
 import skamila.weather.api.forecast_data.Forecast;
 import skamila.weather.api.forecast_data.Weather;
-import skamila.weather.controller.activity.WeatherMain;
-
-import static skamila.weather.Converter.*;
 
 public class NextDaysForecastFragment extends Fragment {
 
@@ -37,9 +34,8 @@ public class NextDaysForecastFragment extends Fragment {
 
     public void refreshData() {
 
-        WeatherMain activity = (WeatherMain) getActivity();
-        FavoriteCitiesForecast favoriteCitiesForecast = activity.getForecastForCities();
-        ProgramData programData = activity.getProgramData();
+        FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
+        ProgramData programData = ProgramData.getInstance();
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
 
         int[] componentIconID = {R.id.icon1, R.id.icon2, R.id.icon3};
@@ -49,14 +45,14 @@ public class NextDaysForecastFragment extends Fragment {
         int forecastIndex = 2;
 
         for (int i = 0; i < 3; i++) {
-            Weather weather = forecast.getList().get(forecastIndex);
+            Weather weather = forecast.getWeathers().get(forecastIndex);
             TextView day = view.findViewById(componentDayID[i]);
             day.setText(weather.getDt_txt().substring(0, 10));
             TextView forecastPerDay = view.findViewById(componentForecastID[i]);
-            forecastPerDay.setText(toMinMaxTemp(toGoodUnit(weather.getMain().getTemp_max(), programData.getUnit()), toGoodUnit(weather.getMain().getTemp_min(), programData.getUnit()), programData.getUnitSymbol()));
-            int iconID = ((WeatherMain) getActivity()).getIconId(forecast.getList().get(0).getWeather().get(0).getIcon());
+            //forecastPerDay.setText(toMinMaxTemp(toGoodUnit(weather.getMain().getTemp_max(), programData.getUnit()), toGoodUnit(weather.getMain().getTemp_min(), programData.getUnit()), programData.getUnitSymbol()));
+            //int iconID = ((WeatherMain) getActivity()).getIconId(forecast.getWeathers().get(0).getWeatherDescriptions().get(0).getIcon());
             ImageView icon = view.findViewById(componentIconID[i]);
-            icon.setImageResource(iconID);
+            //icon.setImageResource(iconID);
             forecastIndex += 8;
         }
     }

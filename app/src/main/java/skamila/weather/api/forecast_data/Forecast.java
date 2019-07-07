@@ -26,7 +26,7 @@ public class Forecast {
         return city;
     }
 
-    public List<Weather> getList() {
+    public List<Weather> getWeathers() {
         return list;
     }
 

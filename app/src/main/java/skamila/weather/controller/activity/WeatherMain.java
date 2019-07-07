@@ -19,10 +19,10 @@ import android.widget.Toast;
 
 import java.util.Date;
 
+import skamila.weather.ForecastDataGetter;
 import skamila.weather.R;
 import skamila.weather.api.connection.WeatherDownloader;
 import skamila.weather.api.connection.ApiController;
-import skamila.weather.Converter;
 import skamila.weather.FavoriteCitiesForecast;
 import skamila.weather.FileManager;
 import skamila.weather.ProgramData;
@@ -31,14 +31,15 @@ import skamila.weather.api.forecast_data.Forecast;
 import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
+import static skamila.weather.ForecastDataGetter.*;
 import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 
 public class WeatherMain extends AppCompatActivity {
 
     private FavoriteCitiesForecast forecastForCities = FavoriteCitiesForecast.getInstance();
     private ProgramData programData = ProgramData.getInstance();
-    final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
-    final Fragment moreInformationFragment = new MoreInformationFragment();
+    private final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
+    private final Fragment moreInformationFragment = new MoreInformationFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class WeatherMain extends AppCompatActivity {
 
         prepareFragments();
         loadOrDownloadForecast();
-        displayData();
+        refreshBasicInformation();
     }
 
     @Override
@@ -71,23 +72,35 @@ public class WeatherMain extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if (item.getItemId() == R.id.refresh) {
-
             refresh();
             Toast toast = Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG);
             toast.show();
             return true;
-
         } else if (item.getItemId() == R.id.settings) {
-
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
-
         }
-
         return false;
+    }
 
+    public void refresh() {
+        refreshBasicInformation();
+        ((MoreInformationFragment) moreInformationFragment).refreshData();
+        ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+    }
+
+    public void prepareForecast(String data) {
+        Forecast forecast = ApiController.convertForecastToObject(data);
+        forecastForCities.add(forecast.getCity(), forecast);
+        programData.addCity(forecast.getCity(), 0);
+        programData.setActualCity(forecast.getCity());
+        refreshBasicInformation();
+        ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+        ((MoreInformationFragment) moreInformationFragment).refreshData();
+        FileManager fileManager = new FileManager(this, forecast.getCity().getName());
+        fileManager.saveToFile(convertObjectToJson(forecast));
+        programData.setUpdateTime(new Date().getTime());
     }
 
     private void loadOrDownloadForecast() {
@@ -113,19 +126,6 @@ public class WeatherMain extends AppCompatActivity {
             }
         }
 
-    }
-
-    public void prepareForecast(String data) {
-        Forecast forecast = ApiController.convertForecastToObject(data);
-        forecastForCities.add(forecast.getCity(), forecast);
-        programData.addCity(forecast.getCity(), 0);
-        programData.setActualCity(forecast.getCity());
-        displayData();
-        ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
-        ((MoreInformationFragment) moreInformationFragment).refreshData();
-        FileManager fileManager = new FileManager(this, forecast.getCity().getName());
-        fileManager.saveToFile(convertObjectToJson(forecast));
-        programData.setUpdateTime(new Date().getTime());
     }
 
     private boolean isInternetConnection() {
@@ -158,69 +158,22 @@ public class WeatherMain extends AppCompatActivity {
 
     }
 
-    private void refresh() {
-
-    }
-
-    public int getIconId(String iconName) {
-        if (iconName.equals("01d")) {
-            return R.drawable._01d;
-        } else if (iconName.equals("01n")) {
-            return R.drawable._01n;
-        } else if (iconName.equals("02d")) {
-            return R.drawable._02d;
-        } else if (iconName.equals("02n")) {
-            return R.drawable._02n;
-        } else if (iconName.equals("03d") || iconName.equals("03n")) {
-            return R.drawable._03d;
-        } else if (iconName.equals("04d") || iconName.equals("04n")) {
-            return R.drawable._04d;
-        } else if (iconName.equals("09d") || iconName.equals("09n")) {
-            return R.drawable._09d;
-        } else if (iconName.equals("10d")) {
-            return R.drawable._10d;
-        } else if (iconName.equals("10n")) {
-            return R.drawable._10n;
-        } else if (iconName.equals("11d") || iconName.equals("11n")) {
-            return R.drawable._11d;
-        } else if (iconName.equals("13d") || iconName.equals("13n")) {
-            return R.drawable._13d;
-        } else if (iconName.equals("50d") || iconName.equals("50n")) {
-            return R.drawable._50d;
-        } else {
-            return R.drawable._01d;
-        }
-    }
-
-    public FavoriteCitiesForecast getForecastForCities() {
-        return forecastForCities;
-    }
-
-    public ProgramData getProgramData() {
-        return programData;
-    }
-
-    public void displayData() {
+    private void refreshBasicInformation() {
 
         if (programData.getActualCity() != null) {
 
             TextView city = findViewById(R.id.city);
-            ImageView todayIcon = findViewById(R.id.todayIcon);
-            TextView description = findViewById(R.id.description);
             TextView actualTemp = findViewById(R.id.actualTemp);
             TextView temp = findViewById(R.id.temp);
+            TextView description = findViewById(R.id.description);
+            ImageView todayIcon = findViewById(R.id.todayIcon);
 
-            city.setText(programData.getActualCity().getName() + ", " + programData.getActualCity().getCountry());
-            Forecast forecast = forecastForCities.getForecast(programData.getActualCity());
-            temp.setText(Converter.toMinMaxTemp(
-                    Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_max(), programData.getUnit()),
-                    Converter.toGoodUnit(forecast.getList().get(0).getMain().getTemp_min(), programData.getUnit()),
-                    programData.getUnitSymbol()
-            ));
+            city.setText(getCity());
+            actualTemp.setText(getActualTemp());
+            temp.setText(getMinMaxTemp(new Date()));
+            description.setText(getTodayDescription());
+            todayIcon.setImageResource(ForecastDataGetter.getIconID(new Date()));
 
-            description.setText(forecast.getList().get(0).getWeather().get(0).getDescription());
-
-            todayIcon.setImageResource(getIconId(forecast.getList().get(0).getWeather().get(0).getIcon()));
         }
 
     }

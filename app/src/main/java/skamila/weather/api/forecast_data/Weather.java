@@ -20,7 +20,7 @@ public class Weather {
         return main;
     }
 
-    public List<WeatherDescription> getWeather() {
+    public List<WeatherDescription> getWeatherDescriptions() {
         return weather;
     }
 
