@@ -1,7 +1,6 @@
 package skamila.weather.api;
 
 import android.app.Activity;
-import android.arch.lifecycle.ViewModel;
 
 import com.google.gson.Gson;
 
@@ -11,7 +10,7 @@ import java.util.List;
 import skamila.weather.api.forecast.City;
 import skamila.weather.api.forecast.Unit;
 
-public class ProgramData extends ViewModel {
+public class ProgramData {
 
     private static ProgramData instance = new ProgramData();
     private long updateTime;
