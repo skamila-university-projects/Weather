@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import skamila.weather.api.forecast_data.City;
-import skamila.weather.api.forecast_data.Unit;
 
 public class ProgramData {
 

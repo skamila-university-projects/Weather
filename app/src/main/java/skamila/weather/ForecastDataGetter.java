@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import skamila.weather.api.forecast_data.Forecast;
-import skamila.weather.api.forecast_data.Unit;
 import skamila.weather.api.forecast_data.Weather;
 
 public class ForecastDataGetter {

@@ -18,7 +18,7 @@ import skamila.weather.FileManager;
 import skamila.weather.ProgramData;
 import skamila.weather.api.forecast_data.City;
 import skamila.weather.api.forecast_data.Forecast;
-import skamila.weather.api.forecast_data.Unit;
+import skamila.weather.Unit;
 
 import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 

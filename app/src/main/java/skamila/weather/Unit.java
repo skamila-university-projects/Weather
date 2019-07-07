@@ -1,4 +1,4 @@
-package skamila.weather.api.forecast_data;
+package skamila.weather;
 
 public enum Unit {
     KELVIN, CELSIUM, FAHRENHEIT
