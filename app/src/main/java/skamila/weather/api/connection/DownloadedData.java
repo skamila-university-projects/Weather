@@ -1,4 +1,4 @@
-package skamila.weather.api;
+package skamila.weather.api.connection;
 
 public class DownloadedData {
 

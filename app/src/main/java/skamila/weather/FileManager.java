@@ -1,4 +1,4 @@
-package skamila.weather.api;
+package skamila.weather;
 
 import android.content.Context;
 

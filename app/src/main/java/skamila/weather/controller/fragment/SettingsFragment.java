@@ -9,18 +9,18 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import skamila.weather.ApiClient;
+import skamila.weather.api.connection.ApiClient;
 import skamila.weather.R;
-import skamila.weather.api.ApiController;
-import skamila.weather.api.DownloadedData;
-import skamila.weather.api.FavoriteCitiesForecast;
-import skamila.weather.api.FileManager;
-import skamila.weather.api.ProgramData;
-import skamila.weather.api.forecast.City;
-import skamila.weather.api.forecast.Forecast;
-import skamila.weather.api.forecast.Unit;
+import skamila.weather.api.connection.ApiController;
+import skamila.weather.api.connection.DownloadedData;
+import skamila.weather.FavoriteCitiesForecast;
+import skamila.weather.FileManager;
+import skamila.weather.ProgramData;
+import skamila.weather.api.forecast_data.City;
+import skamila.weather.api.forecast_data.Forecast;
+import skamila.weather.api.forecast_data.Unit;
 
-import static skamila.weather.api.ApiController.convertObjectToJson;
+import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 
 public class SettingsFragment extends PreferenceFragment {
 

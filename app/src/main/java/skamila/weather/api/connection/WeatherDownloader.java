@@ -1,10 +1,9 @@
-package skamila.weather.api;
+package skamila.weather.api.connection;
 
 import android.content.Context;
 import android.os.AsyncTask;
 
-import skamila.weather.ApiClient;
-import skamila.weather.controller.WeatherMain;
+import skamila.weather.controller.activity.WeatherMain;
 
 
 public class WeatherDownloader extends AsyncTask<String, Integer, DownloadedData> {

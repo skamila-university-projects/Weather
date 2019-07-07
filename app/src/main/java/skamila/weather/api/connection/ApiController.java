@@ -1,10 +1,11 @@
-package skamila.weather.api;
+package skamila.weather.api.connection;
 
 import android.content.Context;
 
 import com.google.gson.Gson;
 
-import skamila.weather.api.forecast.Forecast;
+import skamila.weather.FileManager;
+import skamila.weather.api.forecast_data.Forecast;
 
 public class ApiController {
 

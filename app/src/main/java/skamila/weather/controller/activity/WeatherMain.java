@@ -1,4 +1,4 @@
-package skamila.weather.controller;
+package skamila.weather.controller.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,39 +8,30 @@ import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.util.Date;
 
-import skamila.weather.ApiClient;
 import skamila.weather.R;
-import skamila.weather.api.DownloadedData;
-import skamila.weather.api.WeatherDownloader;
-import skamila.weather.api.ApiController;
-import skamila.weather.api.Converter;
-import skamila.weather.api.FavoriteCitiesForecast;
-import skamila.weather.api.FileManager;
-import skamila.weather.api.ProgramData;
-import skamila.weather.api.forecast.City;
-import skamila.weather.api.forecast.Forecast;
+import skamila.weather.api.connection.WeatherDownloader;
+import skamila.weather.api.connection.ApiController;
+import skamila.weather.Converter;
+import skamila.weather.FavoriteCitiesForecast;
+import skamila.weather.FileManager;
+import skamila.weather.ProgramData;
+import skamila.weather.api.forecast_data.City;
+import skamila.weather.api.forecast_data.Forecast;
 import skamila.weather.controller.fragment.MoreInformationFragment;
 import skamila.weather.controller.fragment.NextDaysForecastFragment;
 
-import static skamila.weather.api.ApiController.convertObjectToJson;
+import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 
 public class WeatherMain extends AppCompatActivity {
 

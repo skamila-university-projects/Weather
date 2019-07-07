@@ -1,4 +1,4 @@
-package skamila.weather.api;
+package skamila.weather;
 
 import android.app.Activity;
 
@@ -7,8 +7,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-import skamila.weather.api.forecast.City;
-import skamila.weather.api.forecast.Unit;
+import skamila.weather.api.forecast_data.City;
+import skamila.weather.api.forecast_data.Unit;
 
 public class ProgramData {
 
@@ -32,8 +32,8 @@ public class ProgramData {
     }
 
     public void setActualCity(String cityName) {
-        for(City city : cities){
-            if(city.getName().equals(cityName)){
+        for (City city : cities) {
+            if (city.getName().equals(cityName)) {
                 actualCity = city;
             }
         }

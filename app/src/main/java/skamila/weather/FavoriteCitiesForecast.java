@@ -1,10 +1,10 @@
-package skamila.weather.api;
+package skamila.weather;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import skamila.weather.api.forecast.City;
-import skamila.weather.api.forecast.Forecast;
+import skamila.weather.api.forecast_data.City;
+import skamila.weather.api.forecast_data.Forecast;
 
 public class FavoriteCitiesForecast {
 

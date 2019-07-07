@@ -1,4 +1,4 @@
-package skamila.weather.api.forecast;
+package skamila.weather.api.forecast_data;
 
 public class WeatherDescription {
 

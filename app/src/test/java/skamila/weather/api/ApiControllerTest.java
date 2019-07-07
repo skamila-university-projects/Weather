@@ -1,12 +1,12 @@
 package skamila.weather.api;
 
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import skamila.weather.api.forecast.City;
-import skamila.weather.api.forecast.Forecast;
+import skamila.weather.api.connection.ApiController;
+import skamila.weather.api.forecast_data.City;
+import skamila.weather.api.forecast_data.Forecast;
 
 import static org.junit.Assert.assertThat;
 

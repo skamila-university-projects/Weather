@@ -11,13 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import skamila.weather.R;
-import skamila.weather.api.FavoriteCitiesForecast;
-import skamila.weather.api.ProgramData;
-import skamila.weather.api.forecast.Forecast;
-import skamila.weather.api.forecast.Weather;
-import skamila.weather.controller.WeatherMain;
+import skamila.weather.FavoriteCitiesForecast;
+import skamila.weather.ProgramData;
+import skamila.weather.api.forecast_data.Forecast;
+import skamila.weather.api.forecast_data.Weather;
+import skamila.weather.controller.activity.WeatherMain;
 
-import static skamila.weather.api.Converter.*;
+import static skamila.weather.Converter.*;
 
 public class NextDaysForecastFragment extends Fragment {
 

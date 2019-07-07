@@ -1,8 +1,8 @@
-package skamila.weather.api;
+package skamila.weather;
 
 import java.util.Locale;
 
-import skamila.weather.api.forecast.Unit;
+import skamila.weather.api.forecast_data.Unit;
 
 public class Converter {
 
