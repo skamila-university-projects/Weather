@@ -24,6 +24,9 @@ import static skamila.weather.api.ApiController.convertObjectToJson;
 
 public class SettingsFragment extends PreferenceFragment {
 
+    private ListPreference cityList;
+    private ProgramData programData = ProgramData.getInstance();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -45,7 +48,7 @@ public class SettingsFragment extends PreferenceFragment {
         units.add("Fahrenheit");
         units.add("Kelvin");
 
-        Unit unit = ProgramData.getInstance().getUnit();
+        Unit unit = programData.getUnit();
         if (unit == Unit.CELSIUM) {
             unitsList.setValue("Celsium");
         } else if (unit == Unit.FAHRENHEIT) {
@@ -60,7 +63,6 @@ public class SettingsFragment extends PreferenceFragment {
         unitsList.setEntryValues(entryValues);
 
         unitsList.setOnPreferenceChangeListener((a, b) -> {
-            ProgramData programData = ProgramData.getInstance();
             if (b.equals("Celsium")) {
                 programData.setUnit(Unit.CELSIUM);
             } else if (b.equals("Fahrenheit")) {
@@ -80,7 +82,6 @@ public class SettingsFragment extends PreferenceFragment {
             DownloadedData downloadedData = ApiClient.sendRequest(ProgramData.getURL(b.toString()));
             if (downloadedData.status == 200) {
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
-                ProgramData programData = ProgramData.getInstance();
                 FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
                 favoriteCitiesForecast.add(forecast.getCity(), forecast);
                 programData.addCity(forecast.getCity());
@@ -90,7 +91,7 @@ public class SettingsFragment extends PreferenceFragment {
                 Toast toast = Toast.makeText(this.getContext(), "Incorrect name", Toast.LENGTH_LONG);
                 toast.show();
             }
-            prepareCityList();
+            updateCityList();
             return true;
         });
 
@@ -98,10 +99,20 @@ public class SettingsFragment extends PreferenceFragment {
 
     private void prepareCityList() {
 
-        ListPreference cityList = (ListPreference) findPreference("cityList");
+        cityList = (ListPreference) findPreference("cityList");
+        updateCityList();
+
+        cityList.setOnPreferenceChangeListener((a, b) -> {
+            String[] chosenCity = ((String) b).split(", ");
+            programData.setActualCity(chosenCity[0]);
+            return true;
+        });
+
+    }
+
+    private void updateCityList() {
 
         List<String> cities = new ArrayList<>();
-        ProgramData programData = ProgramData.getInstance();
 
         for (City city : programData.getCitiesList()) {
             cities.add(city.getName() + ", " + city.getCountry());

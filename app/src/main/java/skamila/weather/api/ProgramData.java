@@ -32,6 +32,14 @@ public class ProgramData extends ViewModel {
         return "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + ", " + country + "&appid=3758dae42d40b6cc1140947ed034389f";
     }
 
+    public void setActualCity(String cityName) {
+        for(City city : cities){
+            if(city.getName().equals(cityName)){
+                actualCity = city;
+            }
+        }
+    }
+
     public static ProgramData getInstance() {
         return instance;
     }
