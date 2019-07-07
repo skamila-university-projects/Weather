@@ -36,13 +36,22 @@ public class ProgramData extends ViewModel {
         return instance;
     }
 
-    public void loadProgramData(Activity activity) {
+    public ProgramData loadProgramData(Activity activity) {
         FileManager fileManager = new FileManager(activity, "data");
         String s = fileManager.loadFromFile();
         if (!s.equals("")) {
             Gson g = new Gson();
             instance = g.fromJson(s, ProgramData.class);
+            return instance;
         }
+        return new ProgramData();
+    }
+
+    public void saveProgramData(Activity activity) {
+        Gson g = new Gson();
+        String s = g.toJson(this);
+        FileManager fm = new FileManager(activity, "data");
+        fm.saveToFile(s);
     }
 
     public long getUpdateTime() {

@@ -45,8 +45,8 @@ import static skamila.weather.api.ApiController.convertObjectToJson;
 
 public class WeatherMain extends AppCompatActivity {
 
-    private FavoriteCitiesForecast forecastForCities;
-    private ProgramData programData;
+    private FavoriteCitiesForecast forecastForCities = FavoriteCitiesForecast.getInstance();
+    private ProgramData programData = ProgramData.getInstance();
     final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
     final Fragment moreInformationFragment = new MoreInformationFragment();
 
@@ -59,9 +59,7 @@ public class WeatherMain extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        forecastForCities = FavoriteCitiesForecast.getInstance();
-        programData = ProgramData.getInstance();
-        programData.loadProgramData(this);
+        programData = programData.loadProgramData(this);
 
         prepareFragments();
         loadOrDownloadForecast();
@@ -71,10 +69,7 @@ public class WeatherMain extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Gson g = new Gson();
-        String s = g.toJson(programData);
-        FileManager fm = new FileManager(this, "data");
-        fm.saveToFile(s);
+        programData.saveProgramData(this);
     }
 
     @Override
