@@ -108,8 +108,6 @@ public class WeatherMain extends AppCompatActivity {
     public void prepareForecast(String data) {
         Forecast forecast = ApiController.convertForecastToObject(data);
         forecastForCities.add(forecast.getCity(), forecast);
-        programData.addCity(forecast.getCity(), 0);
-        programData.setActualCity(forecast.getCity());
         refresh();
         FileManager fileManager = new FileManager(this, forecast.getCity().getName());
         fileManager.saveToFile(convertObjectToJson(forecast));
