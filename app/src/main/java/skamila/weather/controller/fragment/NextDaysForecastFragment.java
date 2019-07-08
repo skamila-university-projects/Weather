@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 
+import skamila.weather.ProgramData;
 import skamila.weather.R;
 
 import static skamila.weather.ForecastDataGetter.*;
@@ -30,7 +31,9 @@ public class NextDaysForecastFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.forecast, container, false);
-        refreshData();
+        if(ProgramData.getInstance().getActualCity() != null){
+            refreshData();
+        }
         return view;
     }
 
@@ -45,7 +48,7 @@ public class NextDaysForecastFragment extends Fragment {
         Date today = new Date();
         Calendar calendar = Calendar.getInstance();
 
-        for (int i = 0; i < date.length; i++){
+        for (int i = 0; i < date.length; i++) {
             calendar.setTime(today);
             calendar.add(Calendar.DAY_OF_MONTH, i + 1);
             date[i] = calendar.getTime();

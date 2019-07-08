@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import skamila.weather.ProgramData;
 import skamila.weather.R;
 
 import static skamila.weather.ForecastDataGetter.*;
@@ -26,7 +27,9 @@ public class MoreInformationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.more_information, container, false);
-        refreshData();
+        if(ProgramData.getInstance().getActualCity() != null){
+            refreshData();
+        }
         return view;
     }
 

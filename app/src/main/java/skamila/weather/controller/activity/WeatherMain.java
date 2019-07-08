@@ -54,7 +54,6 @@ public class WeatherMain extends AppCompatActivity {
 
         prepareFragments();
         loadOrDownloadForecast();
-        refreshBasicInformation();
     }
 
     @Override
@@ -94,10 +93,15 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     public void refresh() {
-        if (programData.getActualCity() != null){
-            refreshBasicInformation();
-            ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
-            ((MoreInformationFragment) moreInformationFragment).refreshData();
+        try{
+            if (programData.getActualCity() != null){
+                prepareFragments();
+                refreshBasicInformation();
+                ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+                ((MoreInformationFragment) moreInformationFragment).refreshData();
+            }
+        } catch (NullPointerException e){
+            e.printStackTrace();
         }
     }
 
@@ -121,6 +125,7 @@ public class WeatherMain extends AppCompatActivity {
                 data = fileManager.loadFromFile();
                 Forecast forecast = ApiController.convertForecastToObject(data);
                 forecastForCities.add(forecast.getCity(), forecast);
+                refresh();
             } else {
                 if (isInternetConnection()) {
                     WeatherDownloader weatherDownloader = new WeatherDownloader(this, ProgramData.getURL(city.getName()));
@@ -131,6 +136,7 @@ public class WeatherMain extends AppCompatActivity {
                     data = fileManager.loadFromFile();
                     Forecast forecast = ApiController.convertForecastToObject(data);
                     forecastForCities.add(forecast.getCity(), forecast);
+                    refresh();
                 }
             }
         }
