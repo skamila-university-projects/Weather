@@ -102,12 +102,21 @@ public class ForecastDataGetter {
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
         double min = forecast.getWeathers().get(0).getMain().getTemp();
 
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+        String day = dayFormat.format(date);
+        String month = monthFormat.format(date);
+        String year = yearFormat.format(date);
+
         try {
             for (int i = 1; i < forecast.getWeathers().size(); i++) {
-                Date nextDate = dateFormat.parse(forecast.getWeathers().get(i).getDt_txt());
-                if (nextDate.after(date) && nextDate.before(date)) {
-                    //TODO manipulacja datami
-                    if (min > forecast.getWeathers().get(i).getMain().getTemp()) {
+                Date tmpDate = dateFormat.parse(forecast.getWeathers().get(i).getDt_txt());
+                if (dayFormat.format(tmpDate).equals(day) &&
+                        monthFormat.format(tmpDate).equals(month) &&
+                        yearFormat.format(tmpDate).equals(year)) {
+                    if (forecast.getWeathers().get(i).getMain().getTemp() < min) {
                         min = forecast.getWeathers().get(i).getMain().getTemp();
                     }
                 }
@@ -127,12 +136,21 @@ public class ForecastDataGetter {
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
         double max = forecast.getWeathers().get(0).getMain().getTemp();
 
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+        String day = dayFormat.format(date);
+        String month = monthFormat.format(date);
+        String year = yearFormat.format(date);
+
         try {
             for (int i = 1; i < forecast.getWeathers().size(); i++) {
-                Date nextDate = dateFormat.parse(forecast.getWeathers().get(i).getDt_txt());
-                //TODO manipulacja datami
-                if (nextDate.after(date) && nextDate.before(date)) {
-                    if (max < forecast.getWeathers().get(i).getMain().getTemp()) {
+                Date tmpDate = dateFormat.parse(forecast.getWeathers().get(i).getDt_txt());
+                if (dayFormat.format(tmpDate).equals(day) &&
+                        monthFormat.format(tmpDate).equals(month) &&
+                        yearFormat.format(tmpDate).equals(year)) {
+                    if (forecast.getWeathers().get(i).getMain().getTemp() > max) {
                         max = forecast.getWeathers().get(i).getMain().getTemp();
                     }
                 }
