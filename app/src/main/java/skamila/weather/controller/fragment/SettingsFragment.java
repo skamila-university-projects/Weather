@@ -137,10 +137,8 @@ public class SettingsFragment extends PreferenceFragment {
         String query = "SELECT * FROM City";
         Cursor cursor = database.rawQuery(query, null);
 
-        cursor.moveToFirst();
-
         while(cursor.moveToNext()) {
-            cities.add(cursor.getString(0));
+            cities.add(cursor.getString(1));
         }
 
         cursor.close();
