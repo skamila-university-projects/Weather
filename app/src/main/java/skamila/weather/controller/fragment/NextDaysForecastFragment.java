@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.Date;
 
 import skamila.weather.R;
-import skamila.weather.FavoriteCitiesForecast;
 
 import static skamila.weather.ForecastDataGetter.*;
 
@@ -34,8 +33,6 @@ public class NextDaysForecastFragment extends Fragment {
     }
 
     public void refreshData() {
-
-        FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
 
         int[] componentIconID = {R.id.icon1, R.id.icon2, R.id.icon3};
         int[] componentDayID = {R.id.day1, R.id.day2, R.id.day3};

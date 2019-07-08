@@ -39,7 +39,7 @@ public class MoreInformationFragment extends Fragment {
         int[] namesID = {R.id.name1, R.id.name2, R.id.name3, R.id.name4};
         int[] dataID = {R.id.data1, R.id.data2, R.id.data3, R.id.data4};
         String[] information = {getTodayPressure(), getTodayClouds(), getTodayWindSpeed(), getTodayWindDeg()};
-        String[] names = {"Pressure", "Clouds", "Wind Speed", "Wind degrees"};
+        String[] names = {"Pressure", "Clouds", "Wind Speed", "Wind directions"};
 
         for (int i = 0; i < 4; i++) {
             TextView name = view.findViewById(namesID[i]);

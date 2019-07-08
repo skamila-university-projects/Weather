@@ -68,6 +68,11 @@ public class ForecastDataGetter {
         return convertToIconID(weather.getWeatherDescriptions().get(0).getIcon());
     }
 
+    public static String convertDate(Date date) {
+        SimpleDateFormat displayDateFormat = new SimpleDateFormat("E, dd.MM");
+        return displayDateFormat.format(date);
+    }
+
     private static Weather getWeather(Date expectedDate) {
 
         FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
@@ -138,11 +143,6 @@ public class ForecastDataGetter {
 
         return max;
 
-    }
-
-    public static String convertDate(Date date) {
-        SimpleDateFormat displayDateFormat = new SimpleDateFormat("E, dd.MM");
-        return displayDateFormat.format(date);
     }
 
     private static String convertTemp(double temp) {
