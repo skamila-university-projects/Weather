@@ -58,6 +58,12 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        refresh();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         programData.saveProgramData(this);
