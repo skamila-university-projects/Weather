@@ -12,10 +12,6 @@ public class ForecastDataGetter {
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static SimpleDateFormat getDataFormat() {
-        return dateFormat;
-    }
-
     public static String getCity() {
         ProgramData programData = ProgramData.getInstance();
         return programData.getActualCity().getName() + ", " + programData.getActualCity().getCountry();

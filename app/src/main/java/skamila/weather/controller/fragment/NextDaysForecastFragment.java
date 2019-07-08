@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import skamila.weather.R;
@@ -38,7 +39,17 @@ public class NextDaysForecastFragment extends Fragment {
         int[] componentIconID = {R.id.icon1, R.id.icon2, R.id.icon3};
         int[] componentDayID = {R.id.day1, R.id.day2, R.id.day3};
         int[] componentForecastID = {R.id.forecast1, R.id.forecast2, R.id.forecast3};
-        Date[] date = {new Date(), new Date(), new Date()};
+
+        Date[] date = new Date[3];
+
+        Date today = new Date();
+        Calendar calendar = Calendar.getInstance();
+
+        for (int i = 0; i < date.length; i++){
+            calendar.setTime(today);
+            calendar.add(Calendar.DAY_OF_MONTH, i + 1);
+            date[i] = calendar.getTime();
+        }
 
         for (int i = 0; i < 3; i++) {
 
