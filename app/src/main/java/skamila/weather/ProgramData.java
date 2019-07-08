@@ -69,8 +69,7 @@ public class ProgramData {
     }
 
     public boolean areDataActual() {
-        return true;
-        //return new Date().getTime() - updateTime <= 10800;
+        return false;
     }
 
     public List<City> getCitiesList() {
