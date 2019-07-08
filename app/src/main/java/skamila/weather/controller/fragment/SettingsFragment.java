@@ -1,5 +1,8 @@
 package skamila.weather.controller.fragment;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -19,6 +22,7 @@ import skamila.weather.ProgramData;
 import skamila.weather.api.forecast_data.City;
 import skamila.weather.api.forecast_data.Forecast;
 import skamila.weather.Unit;
+import skamila.weather.database.Cities;
 
 import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 
@@ -80,20 +84,31 @@ public class SettingsFragment extends PreferenceFragment {
         EditTextPreference newCity = (EditTextPreference) findPreference("newCity");
         newCity.setOnPreferenceChangeListener((a, b) -> {
             DownloadedData downloadedData = ApiClient.sendRequest(ProgramData.getURL(b.toString()));
+
             if (downloadedData.status == 200) {
+
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
                 FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
                 favoriteCitiesForecast.add(forecast.getCity(), forecast);
                 programData.addCity(forecast.getCity());
+
+                Cities citiesSQL = new Cities(this.getContext());
+                SQLiteDatabase database = citiesSQL.getWritableDatabase();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("name", forecast.getCity().getName() + ", " + forecast.getCity().getCountry());
+                database.insert("City", null, contentValues);
+
                 FileManager fileManager = new FileManager(this.getContext(), forecast.getCity().getName());
                 fileManager.saveToFile(convertObjectToJson(forecast));
-                if(programData.getActualCity() == null) {
+                if (programData.getActualCity() == null) {
                     programData.setActualCity(programData.getCitiesList().get(0));
                 }
+
             } else {
                 Toast toast = Toast.makeText(this.getContext(), "Incorrect name", Toast.LENGTH_LONG);
                 toast.show();
             }
+
             updateCityList();
             return true;
         });
@@ -117,9 +132,22 @@ public class SettingsFragment extends PreferenceFragment {
 
         List<String> cities = new ArrayList<>();
 
-        for (City city : programData.getCitiesList()) {
-            cities.add(city.getName() + ", " + city.getCountry());
+        Cities citiesSQL = new Cities(this.getContext());
+        SQLiteDatabase database = citiesSQL.getWritableDatabase();
+        String query = "SELECT * FROM City";
+        Cursor cursor = database.rawQuery(query, null);
+
+        cursor.moveToFirst();
+
+        while(cursor.moveToNext()) {
+            cities.add(cursor.getString(0));
         }
+
+        cursor.close();
+
+//        for (City city : programData.getCitiesList()) {
+//            cities.add(city.getName() + ", " + city.getCountry());
+//        }
 
         CharSequence[] entries = cities.toArray(new CharSequence[0]);
         CharSequence[] entryValues = cities.toArray(new CharSequence[0]);
