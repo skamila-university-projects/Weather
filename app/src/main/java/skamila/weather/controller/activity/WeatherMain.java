@@ -73,9 +73,12 @@ public class WeatherMain extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
-            refresh();
-            Toast toast = Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG);
-            toast.show();
+            if(programData.getActualCity() != null){
+                refresh();
+                Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "You have to add city first", Toast.LENGTH_LONG).show();
+            }
             return true;
         } else if (item.getItemId() == R.id.settings) {
             startActivity(new Intent(this, SettingsActivity.class));
@@ -85,9 +88,11 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     public void refresh() {
-        refreshBasicInformation();
-        ((MoreInformationFragment) moreInformationFragment).refreshData();
-        ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+        if (programData.getActualCity() != null){
+            refreshBasicInformation();
+            ((MoreInformationFragment) moreInformationFragment).refreshData();
+            ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+        }
     }
 
     public void prepareForecast(String data) {
