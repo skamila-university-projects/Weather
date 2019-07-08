@@ -90,8 +90,8 @@ public class WeatherMain extends AppCompatActivity {
     public void refresh() {
         if (programData.getActualCity() != null){
             refreshBasicInformation();
-            ((MoreInformationFragment) moreInformationFragment).refreshData();
             ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+            ((MoreInformationFragment) moreInformationFragment).refreshData();
         }
     }
 

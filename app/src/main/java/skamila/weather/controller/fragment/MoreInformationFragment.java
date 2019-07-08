@@ -26,6 +26,7 @@ public class MoreInformationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.more_information, container, false);
+        refreshData();
         return view;
     }
 
