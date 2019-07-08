@@ -87,6 +87,9 @@ public class SettingsFragment extends PreferenceFragment {
                 programData.addCity(forecast.getCity());
                 FileManager fileManager = new FileManager(this.getContext(), forecast.getCity().getName());
                 fileManager.saveToFile(convertObjectToJson(forecast));
+                if(programData.getActualCity() == null) {
+                    programData.setActualCity(programData.getCitiesList().get(0));
+                }
             } else {
                 Toast toast = Toast.makeText(this.getContext(), "Incorrect name", Toast.LENGTH_LONG);
                 toast.show();
