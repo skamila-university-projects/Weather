@@ -31,8 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/actualTemp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/city"
@@ -42,7 +41,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/actualTemp"
         app:layout_constraintEnd_toStartOf="@+id/viewPager"
         app:layout_constraintHorizontal_bias="0.549"
@@ -58,7 +56,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/temp"
         app:layout_constraintEnd_toStartOf="@+id/viewPager"
         app:layout_constraintStart_toEndOf="@+id/todayIcon"
@@ -70,7 +67,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/description"
         app:layout_constraintEnd_toEndOf="@+id/actualTemp"
         app:layout_constraintStart_toStartOf="@+id/actualTemp"
@@ -82,7 +78,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/temp"
         app:layout_constraintStart_toStartOf="@+id/temp"
