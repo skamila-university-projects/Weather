@@ -7,10 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import skamila.weather.R;
 
+import static skamila.weather.ForecastDataGetter.*;
+
 public class MoreInformationFragment extends Fragment {
+
+    private View view;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,8 +25,7 @@ public class MoreInformationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.more_information, container, false);
-
+        view = inflater.inflate(R.layout.more_information, container, false);
         return view;
     }
 
@@ -31,6 +35,18 @@ public class MoreInformationFragment extends Fragment {
     }
 
     public void refreshData() {
+
+        int[] namesID = {R.id.name1, R.id.name2, R.id.name3, R.id.name4};
+        int[] dataID = {R.id.data1, R.id.data2, R.id.data3, R.id.data4};
+        String[] information = {getTodayPressure(), getTodayClouds(), getTodayWindSpeed(), getTodayWindDeg()};
+        String[] names = {"Pressure", "Clouds", "Wind Speed", "Wind degrees"};
+
+        for (int i = 0; i < 4; i++) {
+            TextView name = view.findViewById(namesID[i]);
+            TextView data = view.findViewById(dataID[i]);
+            name.setText(names[i]);
+            data.setText(information[i]);
+        }
 
     }
 

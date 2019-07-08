@@ -10,6 +10,8 @@ import skamila.weather.api.forecast_data.Weather;
 
 public class ForecastDataGetter {
 
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     public static String getCity() {
         ProgramData programData = ProgramData.getInstance();
         return programData.getActualCity().getName() + ", " + programData.getActualCity().getCountry();
@@ -35,19 +37,25 @@ public class ForecastDataGetter {
     public static String getTodayClouds() {
         ProgramData programData = ProgramData.getInstance();
         Weather weather = getWeather(new Date());
-        return String.valueOf(weather.getClouds().getAll());
+        return convertDouble(weather.getClouds().getAll()) + "%";
     }
 
     public static String getTodayWindSpeed() {
         ProgramData programData = ProgramData.getInstance();
         Weather weather = getWeather(new Date());
-        return String.valueOf(weather.getWind().getSpeed());
+        return convertDouble(weather.getWind().getSpeed() * 1.852) + " km/h";
     }
 
     public static String getTodayWindDeg() {
         ProgramData programData = ProgramData.getInstance();
         Weather weather = getWeather(new Date());
-        return String.valueOf(weather.getWind().getDeg());
+        return convertWindDeg(weather.getWind().getDeg());
+    }
+
+    public static String getTodayPressure() {
+        ProgramData programData = ProgramData.getInstance();
+        Weather weather = getWeather(new Date());
+        return convertDouble(weather.getMain().getPressure()) + " hPa";
     }
 
     public static int getIconID(Date date) {
@@ -60,7 +68,6 @@ public class ForecastDataGetter {
 
         FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
         ProgramData programData = ProgramData.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
 
         try {
@@ -83,7 +90,6 @@ public class ForecastDataGetter {
 
         FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
         ProgramData programData = ProgramData.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
         double min = forecast.getWeathers().get(0).getMain().getTemp();
 
@@ -109,7 +115,6 @@ public class ForecastDataGetter {
 
         FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
         ProgramData programData = ProgramData.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Forecast forecast = favoriteCitiesForecast.getForecast(programData.getActualCity());
         double max = forecast.getWeathers().get(0).getMain().getTemp();
 
@@ -142,6 +147,10 @@ public class ForecastDataGetter {
         }
     }
 
+    private static String convertDouble(double d) {
+        return String.format(Locale.getDefault(), "%.1f", d);
+    }
+
     private static int convertToIconID(String iconName) {
         if (iconName.equals("01d")) {
             return R.drawable._01d;
@@ -169,6 +178,44 @@ public class ForecastDataGetter {
             return R.drawable._50d;
         } else {
             return R.drawable._01d;
+        }
+    }
+
+    private static String convertWindDeg(double deg) {
+        if(deg >= 348.75 || deg <= 11.25){
+            return "N";
+        } else if (deg <= 33.75){
+            return "NNE";
+        } else if (deg <= 56.25){
+            return "NE";
+        } else if (deg <= 78.75){
+            return "ENE";
+        } else if (deg <= 101.25){
+            return "E";
+        } else if (deg <= 123.75){
+            return "ESE";
+        } else if (deg <= 146.25){
+            return "SE";
+        } else if (deg <= 168.75){
+            return "SSE";
+        } else if (deg <= 191.25){
+            return "S";
+        } else if (deg <= 213.75){
+            return "SSW";
+        } else if (deg <= 236.25){
+            return "SW";
+        } else if (deg <= 258.75){
+            return "WSW";
+        } else if (deg <= 281.25){
+            return "W";
+        } else if (deg <= 303.75){
+            return "WNW";
+        } else if (deg <= 326.25){
+            return "NW";
+        } else if (deg <= 348.75){
+            return "NNW";
+        } else {
+            return "";
         }
     }
 
