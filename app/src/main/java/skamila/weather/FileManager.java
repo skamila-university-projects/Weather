@@ -28,6 +28,7 @@ public class FileManager {
         try {
             fos = context.openFileOutput(fileName, MODE_PRIVATE);
             fos.write(text.getBytes());
+            System.out.println(context.getPackageResourcePath());
             fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -51,7 +52,7 @@ public class FileManager {
             while ((text = br.readLine()) != null) {
                 sb.append(text);
             }
-
+            System.out.println(context.getPackageResourcePath());
             fis.close();
             isr.close();
             br.close();

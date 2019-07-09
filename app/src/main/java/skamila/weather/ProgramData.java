@@ -33,9 +33,18 @@ public class ProgramData {
     public void setActualCity(String cityName) {
         for (City city : cities) {
             if (city.getName().equals(cityName)) {
-                actualCity = city;
+                instance.actualCity = city;
             }
         }
+    }
+
+    public boolean isCity(String _city) {
+        for (City city : instance.cities) {
+            if ((city.getName() + ", " + city.getCountry()).equals(_city)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static ProgramData getInstance() {
@@ -50,7 +59,8 @@ public class ProgramData {
             instance = g.fromJson(s, ProgramData.class);
             return instance;
         }
-        return new ProgramData();
+        instance = new ProgramData();
+        return instance;
     }
 
     public void saveProgramData(Activity activity) {
@@ -61,11 +71,11 @@ public class ProgramData {
     }
 
     public long getUpdateTime() {
-        return updateTime;
+        return instance.updateTime;
     }
 
     public void setUpdateTime(long updateTime) {
-        this.updateTime = updateTime;
+        instance.updateTime = updateTime;
     }
 
     public boolean areDataActual() {
@@ -73,37 +83,37 @@ public class ProgramData {
     }
 
     public List<City> getCitiesList() {
-        return cities;
+        return instance.cities;
     }
 
     public void addCity(City city) {
-        cities.add(city);
+        instance.cities.add(city);
     }
 
     public void addCity(City city, int index) {
-        cities.add(index, city);
+        instance.cities.add(index, city);
     }
 
     public void deleteCity(City city) {
-        cities.remove(city);
+        instance.cities.remove(city);
     }
 
     public City getActualCity() {
-        return actualCity;
+        return instance.actualCity;
     }
 
     public void setActualCity(City city) {
-        actualCity = city;
+        instance.actualCity = city;
     }
 
     public void setUnit(Unit unit) {
-        this.unit = unit;
+        instance.unit = unit;
     }
 
     public String getUnitSymbol() {
-        if (unit == Unit.CELSIUM) {
+        if (instance.unit == Unit.CELSIUM) {
             return "°";
-        } else if (unit == Unit.FAHRENHEIT) {
+        } else if (instance.unit == Unit.FAHRENHEIT) {
             return "ºF";
         } else {
             return "K";
@@ -111,7 +121,7 @@ public class ProgramData {
     }
 
     public Unit getUnit() {
-        return unit;
+        return instance.unit;
     }
 
 }

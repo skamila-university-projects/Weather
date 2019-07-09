@@ -74,6 +74,7 @@ public class SettingsFragment extends PreferenceFragment {
             } else if (b.equals("Kelvin")) {
                 programData.setUnit(Unit.KELVIN);
             }
+            programData.saveProgramData(this.getActivity());
             return true;
         });
 
@@ -90,18 +91,23 @@ public class SettingsFragment extends PreferenceFragment {
                 Forecast forecast = ApiController.convertForecastToObject(downloadedData.data);
                 FavoriteCitiesForecast favoriteCitiesForecast = FavoriteCitiesForecast.getInstance();
                 favoriteCitiesForecast.add(forecast.getCity(), forecast);
-                programData.addCity(forecast.getCity());
 
                 Cities citiesSQL = new Cities(this.getContext());
                 SQLiteDatabase database = citiesSQL.getWritableDatabase();
                 ContentValues contentValues = new ContentValues();
-                contentValues.put("name", forecast.getCity().getName() + ", " + forecast.getCity().getCountry());
-                database.insert("City", null, contentValues);
+                String city = forecast.getCity().getName() + ", " + forecast.getCity().getCountry();
 
-                FileManager fileManager = new FileManager(this.getContext(), forecast.getCity().getName());
-                fileManager.saveToFile(convertObjectToJson(forecast));
-                if (programData.getActualCity() == null) {
-                    programData.setActualCity(programData.getCitiesList().get(0));
+                if(!programData.isCity(city)){
+                    programData.addCity(forecast.getCity());
+                    contentValues.put("name", city);
+                    database.insert("City", null, contentValues);
+
+                    FileManager fileManager = new FileManager(this.getContext(), forecast.getCity().getName());
+                    fileManager.saveToFile(convertObjectToJson(forecast));
+                    if (programData.getActualCity() == null) {
+                        programData.setActualCity(programData.getCitiesList().get(0));
+                    }
+                    programData.saveProgramData(this.getActivity());
                 }
 
             } else {

@@ -20,12 +20,12 @@ import android.widget.Toast;
 import java.util.Date;
 
 import skamila.weather.ForecastDataGetter;
+import skamila.weather.ProgramData;
 import skamila.weather.R;
 import skamila.weather.api.connection.WeatherDownloader;
 import skamila.weather.api.connection.ApiController;
 import skamila.weather.FavoriteCitiesForecast;
 import skamila.weather.FileManager;
-import skamila.weather.ProgramData;
 import skamila.weather.api.forecast_data.City;
 import skamila.weather.api.forecast_data.Forecast;
 import skamila.weather.controller.fragment.MoreInformationFragment;
@@ -37,7 +37,6 @@ import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 public class WeatherMain extends AppCompatActivity {
 
     private FavoriteCitiesForecast forecastForCities = FavoriteCitiesForecast.getInstance();
-    private ProgramData programData = ProgramData.getInstance();
     private final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
     private final Fragment moreInformationFragment = new MoreInformationFragment();
 
@@ -50,7 +49,7 @@ public class WeatherMain extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        programData = programData.loadProgramData(this);
+        ProgramData.getInstance().loadProgramData(this);
 
         prepareFragments();
         loadOrDownloadForecast();
@@ -65,7 +64,6 @@ public class WeatherMain extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        programData.saveProgramData(this);
     }
 
     @Override
@@ -78,7 +76,7 @@ public class WeatherMain extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
-            if(programData.getActualCity() != null){
+            if(ProgramData.getInstance().getActualCity() != null){
                 refresh();
                 Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG).show();
             } else {
@@ -94,7 +92,7 @@ public class WeatherMain extends AppCompatActivity {
 
     public void refresh() {
         try{
-            if (programData.getActualCity() != null){
+            if (ProgramData.getInstance().getActualCity() != null){
                 prepareFragments();
                 refreshBasicInformation();
                 ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
@@ -111,22 +109,22 @@ public class WeatherMain extends AppCompatActivity {
         refresh();
         FileManager fileManager = new FileManager(this, forecast.getCity().getName());
         fileManager.saveToFile(convertObjectToJson(forecast));
-        programData.setUpdateTime(new Date().getTime());
+        ProgramData.getInstance().setUpdateTime(new Date().getTime());
     }
 
     private void loadOrDownloadForecast() {
 
-        for (City city : programData.getCitiesList()) {
+        for (City city : ProgramData.getInstance().getCitiesList()) {
             final FileManager fileManager = new FileManager(this, city.getName());
             String data;
-            if (programData.areDataActual()) {
+            if (ProgramData.getInstance().areDataActual()) {
                 data = fileManager.loadFromFile();
                 Forecast forecast = ApiController.convertForecastToObject(data);
                 forecastForCities.add(forecast.getCity(), forecast);
                 refresh();
             } else {
                 if (isInternetConnection()) {
-                    WeatherDownloader weatherDownloader = new WeatherDownloader(this, ProgramData.getURL(city.getName()));
+                    WeatherDownloader weatherDownloader = new WeatherDownloader(this, ProgramData.getInstance().getURL(city.getName()));
                     weatherDownloader.execute();
                 } else {
                     Toast.makeText(this, "No connection to the Internet. \n" +
@@ -173,7 +171,7 @@ public class WeatherMain extends AppCompatActivity {
 
     private void refreshBasicInformation() {
 
-        if (programData.getActualCity() != null) {
+        if (ProgramData.getInstance().getActualCity() != null) {
 
             TextView city = findViewById(R.id.city);
             TextView actualTemp = findViewById(R.id.actualTemp);
