@@ -41,11 +41,15 @@ public class MoreInformationFragment extends Fragment {
         String[] information = {getTodayPressure(), getTodayClouds(), getTodayWindSpeed(), getTodayWindDeg()};
         String[] names = {"Pressure", "Clouds", "Wind Speed", "Wind directions"};
 
-        for (int i = 0; i < 4; i++) {
-            TextView name = view.findViewById(namesID[i]);
-            TextView data = view.findViewById(dataID[i]);
-            name.setText(names[i]);
-            data.setText(information[i]);
+        if (view != null) {
+
+            for (int i = 0; i < 4; i++) {
+                TextView name = view.findViewById(namesID[i]);
+                TextView data = view.findViewById(dataID[i]);
+                name.setText(names[i]);
+                data.setText(information[i]);
+            }
+
         }
 
     }

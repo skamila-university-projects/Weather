@@ -29,6 +29,7 @@ public class NextDaysForecastFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
         view = inflater.inflate(R.layout.forecast, container, false);
         return view;
     }
@@ -50,16 +51,19 @@ public class NextDaysForecastFragment extends Fragment {
             date[i] = calendar.getTime();
         }
 
-        for (int i = 0; i < 3; i++) {
+        if (view != null) {
 
-            ImageView icon = view.findViewById(componentIconID[i]);
-            TextView day = view.findViewById(componentDayID[i]);
-            TextView temp = view.findViewById(componentForecastID[i]);
+            for (int i = 0; i < 3; i++) {
 
-            icon.setImageResource(getIconID(date[i]));
-            day.setText(convertDate(date[i]));
-            temp.setText(getMinMaxTemp(date[i]));
+                ImageView icon = view.findViewById(componentIconID[i]);
+                TextView day = view.findViewById(componentDayID[i]);
+                TextView temp = view.findViewById(componentForecastID[i]);
 
+                icon.setImageResource(getIconID(date[i]));
+                day.setText(convertDate(date[i]));
+                temp.setText(getMinMaxTemp(date[i]));
+
+            }
         }
 
     }

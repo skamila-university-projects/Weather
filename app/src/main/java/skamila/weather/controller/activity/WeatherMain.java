@@ -37,8 +37,8 @@ import static skamila.weather.api.connection.ApiController.convertObjectToJson;
 public class WeatherMain extends AppCompatActivity {
 
     private FavoriteCitiesForecast forecastForCities = FavoriteCitiesForecast.getInstance();
-    private final Fragment nextDaysForecastFragment = new NextDaysForecastFragment();
-    private final Fragment moreInformationFragment = new MoreInformationFragment();
+    private Fragment nextDaysForecastFragment;
+    private Fragment moreInformationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +49,25 @@ public class WeatherMain extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        ProgramData.getInstance().loadProgramData(this);
+        if (savedInstanceState == null) {
+            ProgramData.getInstance().loadProgramData(this);
+            nextDaysForecastFragment = new NextDaysForecastFragment();
+            moreInformationFragment = new MoreInformationFragment();
+        } else {
+            nextDaysForecastFragment = getSupportFragmentManager().findFragmentByTag(savedInstanceState.getString("nextDaysForecastFragment"));
+            moreInformationFragment = getSupportFragmentManager().findFragmentByTag(savedInstanceState.getString("moreInformationFragment"));
+        }
 
         prepareFragments();
         loadOrDownloadForecast();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("nextDaysForecastFragment", nextDaysForecastFragment.getTag());
+        savedInstanceState.putString("moreInformationFragment", moreInformationFragment.getTag());
     }
 
     @Override
@@ -76,7 +91,7 @@ public class WeatherMain extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.refresh) {
-            if(ProgramData.getInstance().getActualCity() != null){
+            if (ProgramData.getInstance().getActualCity() != null) {
                 refresh();
                 Toast.makeText(this, "Data are been refreshed", Toast.LENGTH_LONG).show();
             } else {
@@ -91,15 +106,11 @@ public class WeatherMain extends AppCompatActivity {
     }
 
     public void refresh() {
-        try{
-            if (ProgramData.getInstance().getActualCity() != null){
-                prepareFragments();
-                refreshBasicInformation();
-                ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
-                ((MoreInformationFragment) moreInformationFragment).refreshData();
-            }
-        } catch (NullPointerException e){
-            e.printStackTrace();
+        if (ProgramData.getInstance().getActualCity() != null) {
+            prepareFragments();
+            refreshBasicInformation();
+            ((NextDaysForecastFragment) nextDaysForecastFragment).refreshData();
+            ((MoreInformationFragment) moreInformationFragment).refreshData();
         }
     }
 
@@ -165,7 +176,12 @@ public class WeatherMain extends AppCompatActivity {
             }
         };
 
+//        nextDaysForecastFragment.refreshData();
+//        moreInformationFragment.refreshData();
+
         viewPager.setAdapter(pagerAdapter);
+//        viewPager.setCurrentItem(1);
+//        viewPager.setCurrentItem(0);
 
     }
 
